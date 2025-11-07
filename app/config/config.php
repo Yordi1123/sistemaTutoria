@@ -10,20 +10,57 @@ define('PUBLIC_PATH', ROOT_PATH . 'public' . DIRECTORY_SEPARATOR);
 define('STORAGE_PATH', ROOT_PATH . 'storage' . DIRECTORY_SEPARATOR);
 define('VIEWS_PATH', APP_PATH . 'views' . DIRECTORY_SEPARATOR);
 
-// Configuración de la aplicación
-define('APP_NAME', 'Sistema Académico');
-
-// Detectar APP_URL automáticamente
-$protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
-$host = $_SERVER['HTTP_HOST'] ?? 'localhost';
-$scriptDir = dirname($_SERVER['SCRIPT_NAME']);
-$scriptDir = str_replace('\\', '/', $scriptDir);
-if ($scriptDir !== '/') {
-    $scriptDir = rtrim($scriptDir, '/');
+// Función para leer variables de entorno
+if (!function_exists('env')) {
+    function env($key, $default = null) {
+        $envFile = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . '.env';
+        
+        if (!file_exists($envFile)) {
+            return $default;
+        }
+        
+        $lines = file($envFile, FILE_IGNORE_NEW_LINES | FILE_SKIP_EMPTY_LINES);
+        
+        foreach ($lines as $line) {
+            if (strpos(trim($line), '#') === 0) {
+                continue;
+            }
+            
+            if (strpos($line, '=') !== false) {
+                list($name, $value) = explode('=', $line, 2);
+                $name = trim($name);
+                $value = trim($value);
+                $value = trim($value, '"\'');
+                
+                if ($name === $key) {
+                    return $value;
+                }
+            }
+        }
+        
+        return $default;
+    }
 }
-define('APP_URL', "{$protocol}://{$host}{$scriptDir}");
 
-define('APP_ENV', 'development'); // development, production
+// Configuración de la aplicación
+define('APP_NAME', env('APP_NAME', 'Sistema de Tutoría'));
+
+// Detectar APP_URL desde .env o automáticamente
+$appUrl = env('APP_URL');
+if ($appUrl) {
+    define('APP_URL', rtrim($appUrl, '/'));
+} else {
+    $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? 'https' : 'http';
+    $host = $_SERVER['HTTP_HOST'] ?? 'localhost';
+    $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+    $scriptDir = str_replace('\\', '/', $scriptDir);
+    if ($scriptDir !== '/') {
+        $scriptDir = rtrim($scriptDir, '/');
+    }
+    define('APP_URL', "{$protocol}://{$host}{$scriptDir}");
+}
+
+define('APP_ENV', env('APP_ENV', 'development')); // development, production
 
 // Configuración de errores
 if (APP_ENV === 'development') {

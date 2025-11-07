@@ -13,7 +13,7 @@ class Router
     /**
      * Agrega una ruta
      */
-    public function addRoute(string $method, string $path, string $controller, string $action): void
+    public function addRoute(string $method, string $path, $controller, string $action = null): void
     {
         $this->routes[] = [
             'method' => strtoupper($method),
@@ -26,7 +26,7 @@ class Router
     /**
      * Agrega una ruta GET
      */
-    public function get(string $path, string $controller, string $action): void
+    public function get(string $path, $controller, string $action = null): void
     {
         $this->addRoute('GET', $path, $controller, $action);
     }
@@ -109,8 +109,14 @@ class Router
     /**
      * Despacha el controlador y acción
      */
-    private function dispatch(string $controller, string $action): void
+    private function dispatch($controller, string $action = null): void
     {
+        // Si es un callback (closure), ejecutarlo directamente
+        if (is_callable($controller)) {
+            call_user_func($controller);
+            return;
+        }
+
         $controllerClass = "App\\Controllers\\{$controller}";
         
         if (!class_exists($controllerClass)) {
@@ -120,9 +126,14 @@ class Router
 
         $controllerInstance = new $controllerClass();
         
-        if (!method_exists($controllerInstance, $action)) {
+        if ($action && !method_exists($controllerInstance, $action)) {
             $this->notFound();
             return;
+        }
+
+        // Si no hay acción, intentar usar index
+        if (!$action) {
+            $action = 'index';
         }
 
         // Pasar parámetros al método si existen
