@@ -1,0 +1,20 @@
+# Denegar acceso directo a archivos y carpetas del sistema
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # Redirigir todo al directorio public
+    RewriteCond %{REQUEST_URI} !^/sistemaAcademico/public/
+    RewriteRule ^(.*)$ public/$1 [L]
+</IfModule>
+
+# Denegar acceso a archivos sensibles
+<FilesMatch "^(composer\.(json|lock)|\.env|\.git)">
+    Order Deny,Allow
+    Deny from all
+</FilesMatch>
+
+# Denegar acceso al directorio app
+<IfModule mod_rewrite.c>
+    RewriteRule ^app/ - [F,L]
+</IfModule>
+
