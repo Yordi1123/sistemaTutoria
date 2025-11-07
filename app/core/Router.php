@@ -177,13 +177,16 @@ class Router
         $uri = str_replace('\\', '/', $uri);
         
         // Obtener el directorio del script (public)
-        $scriptDir = dirname($_SERVER['SCRIPT_NAME']);
+        $scriptDir = dirname($_SERVER['SCRIPT_NAME'] ?? '/');
         $scriptDir = str_replace('\\', '/', $scriptDir);
         
         // Si la URI contiene el directorio del script, removerlo
-        if ($scriptDir !== '/' && strpos($uri, $scriptDir) === 0) {
+        if ($scriptDir !== '/' && $scriptDir !== '\\' && strpos($uri, $scriptDir) === 0) {
             $uri = substr($uri, strlen($scriptDir));
         }
+        
+        // También intentar remover /sistemaAcademico/public si está en la URI
+        $uri = preg_replace('#^/sistemaAcademico/public#', '', $uri);
 
         // Asegurar que empiece con /
         if (empty($uri) || $uri[0] !== '/') {

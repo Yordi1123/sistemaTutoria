@@ -1,0 +1,19 @@
+# Versión alternativa del .htaccess para XAMPP
+# Si la versión principal no funciona, renombra este archivo a .htaccess
+
+RewriteEngine On
+RewriteBase /sistemaAcademico/public/
+
+# Permitir acceso a archivos estáticos
+RewriteCond %{REQUEST_FILENAME} -f [OR]
+RewriteCond %{REQUEST_FILENAME} -d
+RewriteRule ^ - [L]
+
+# Redirigir todo lo demás a index.php
+RewriteRule ^ index.php [L]
+
+# Proteger archivos sensibles
+<FilesMatch "\.(env|ini|log|sh)$">
+    Require all denied
+</FilesMatch>
+
