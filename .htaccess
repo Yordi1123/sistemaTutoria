@@ -1,20 +1,30 @@
-# Denegar acceso directo a archivos y carpetas del sistema
+# Configuración para Sistema de Tutoría MVC
+
 <IfModule mod_rewrite.c>
     RewriteEngine On
+    RewriteBase /sistemaTutoria/
     
-    # Redirigir todo al directorio public
-    RewriteCond %{REQUEST_URI} !^/sistemaAcademico/public/
-    RewriteRule ^(.*)$ public/$1 [L]
+    # Permitir acceso a archivos y carpetas existentes
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # Redirigir todo al index.php (URLs amigables - opcional)
+    # RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
 </IfModule>
 
 # Denegar acceso a archivos sensibles
-<FilesMatch "^(composer\.(json|lock)|\.env|\.git)">
+<FilesMatch "^(config\.php|\.env|\.git)">
     Order Deny,Allow
     Deny from all
 </FilesMatch>
 
-# Denegar acceso al directorio app
-<IfModule mod_rewrite.c>
-    RewriteRule ^app/ - [F,L]
-</IfModule>
+# Configuración de codificación
+AddDefaultCharset UTF-8
 
+# Configuración de PHP (opcional)
+<IfModule mod_php7.c>
+    php_value upload_max_filesize 10M
+    php_value post_max_size 10M
+    php_value max_execution_time 300
+    php_value max_input_time 300
+</IfModule>

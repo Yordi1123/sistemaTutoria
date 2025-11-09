@@ -1,32 +1,41 @@
-# Dependencias
-/vendor/
+# Archivos de configuración
+config.php
 
-# Archivos de configuración sensibles
+# Archivos de entorno
 .env
-*.env
-!.env.example
+.env.local
 
-# Archivos del sistema
+# Archivos del sistema operativo
 .DS_Store
 Thumbs.db
+desktop.ini
 
-# Archivos de IDE
-.idea/
+# Archivos de IDEs
 .vscode/
+.idea/
 *.swp
 *.swo
 *~
 
-# Logs
+# Archivos de logs
 *.log
-/storage/logs/*.log
-!/storage/logs/.gitkeep
-
-# Uploads
-/storage/uploads/*
-!/storage/uploads/.gitkeep
+logs/
 
 # Archivos temporales
-*.tmp
-*.cache
+tmp/
+temp/
+cache/
 
+# Archivos de base de datos
+*.sql.gz
+*.sql.backup
+
+# Archivos de uploads (si existen)
+uploads/
+
+# Node modules (si se usa alguna herramienta de build)
+node_modules/
+
+# Composer (si se usa)
+vendor/
+composer.lock

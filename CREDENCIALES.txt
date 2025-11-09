@@ -1,0 +1,73 @@
+==============================================================
+  SISTEMA DE TUTORÍA - CREDENCIALES DE ACCESO
+==============================================================
+
+🌐 URL DEL SISTEMA
+http://localhost/sistemaTutoria/
+
+==============================================================
+👔 ADMINISTRADOR / COORDINADOR
+==============================================================
+Usuario: admin
+Contraseña: admin123
+Dashboard: http://localhost/sistemaTutoria/index.php?c=dashboard&a=admin
+
+Permisos:
+- Gestionar estudiantes (CRUD completo)
+- Gestionar tutores (CRUD completo)  
+- Ver estadísticas generales
+- Acceso total al sistema
+
+==============================================================
+👨‍🏫 DOCENTE / TUTOR
+==============================================================
+Usuario: DOC001
+Contraseña: doc123
+Dashboard: http://localhost/sistemaTutoria/index.php?c=dashboard&a=docente
+
+Usuario: DOC002
+Contraseña: doc123
+Dashboard: http://localhost/sistemaTutoria/index.php?c=dashboard&a=docente
+
+Permisos:
+- Ver lista de estudiantes
+- [Próximamente] Gestionar tutorías
+- [Próximamente] Registrar fichas
+
+==============================================================
+👨‍🎓 ESTUDIANTE
+==============================================================
+Usuario: 0201910001
+Contraseña: est123
+Dashboard: http://localhost/sistemaTutoria/index.php?c=dashboard&a=estudiante
+
+Usuario: 0201910002
+Contraseña: est123
+Dashboard: http://localhost/sistemaTutoria/index.php?c=dashboard&a=estudiante
+
+Permisos:
+- Ver lista de tutores
+- [Próximamente] Solicitar tutorías
+- [Próximamente] Ver historial
+
+==============================================================
+📝 CREAR NUEVOS USUARIOS
+==============================================================
+URL Registro: http://localhost/sistemaTutoria/index.php?c=auth&a=register
+
+Tipos disponibles:
+- Estudiante
+- Docente/Tutor
+
+Nota: Los administradores solo se crean directamente en la BD
+
+==============================================================
+🔐 NOTAS DE SEGURIDAD
+==============================================================
+- Las contraseñas están hasheadas con password_hash()
+- Sistema usa PDO con prepared statements
+- Protección contra SQL injection y XSS
+- Sesiones seguras con validación de roles
+
+==============================================================
+
