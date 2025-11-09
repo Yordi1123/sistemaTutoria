@@ -2,6 +2,9 @@
   SISTEMA DE TUTORÍA - CREDENCIALES DE ACCESO
 ==============================================================
 
+⚠️  IMPORTANTE: Si no puedes iniciar sesión, ejecuta:
+    actualizar_passwords.sql en phpMyAdmin
+
 🌐 URL DEL SISTEMA
 http://localhost/sistemaTutoria/
 

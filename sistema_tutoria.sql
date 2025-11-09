@@ -127,21 +127,21 @@ CREATE TABLE fichas_consejeria (
 
 -- Usuario coordinador (password: admin123)
 INSERT INTO usuarios (username, password, rol) VALUES 
-('admin', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'coordinador');
+('admin', '$2y$10$eFdKUnR0Kv1XW28C/PflKOsgGsXPLIZGz62XuXPfn/G.QDJNFih/.', 'coordinador');
 
 -- Usuarios docentes (password: doc123)
 INSERT INTO usuarios (username, password, rol) VALUES 
-('DOC001', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'docente'),
-('DOC002', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'docente');
+('DOC001', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'docente'),
+('DOC002', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'docente');
 
 -- Usuario consejero (password: cons123)
 INSERT INTO usuarios (username, password, rol) VALUES 
-('CONS001', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'consejero');
+('CONS001', '$2y$10$2Ew/hCeDTACgVxtXIciOmeUcK/2lPRG9wThVNzrSHXIZQ0F5H4i4O', 'consejero');
 
 -- Usuarios estudiantes (password: est123)
 INSERT INTO usuarios (username, password, rol) VALUES 
-('0201910001', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'estudiante'),
-('0201910002', '$2y$10$92IXUNpkjO0rOQ5byMi.Ye4oKoEa3Ro9llC/.og/at2.uheWG/igi', 'estudiante');
+('0201910001', '$2y$10$PJAYkwb8yM4XtfnfIZHMAOpmn1.YyYfCvGqEQiUlRRF3IzEuq0uvq', 'estudiante'),
+('0201910002', '$2y$10$PJAYkwb8yM4XtfnfIZHMAOpmn1.YyYfCvGqEQiUlRRF3IzEuq0uvq', 'estudiante');
 
 -- Datos de docentes
 INSERT INTO docentes (usuario_id, codigo, nombres, apellidos, email, especialidad) VALUES 
