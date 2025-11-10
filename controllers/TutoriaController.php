@@ -275,5 +275,140 @@ class TutoriaController {
         
         require_once 'views/tutoria/index.php';
     }
+
+    // ==========================================
+    // DOCENTE - SOLICITUDES PENDIENTES
+    // ==========================================
+    
+    public function solicitudes() {
+        AuthController::checkRole(['docente']);
+        
+        // Obtener docente_id
+        $tutorModel = new Tutor();
+        $tutores = $tutorModel->getAll();
+        $docente_id = null;
+        
+        foreach ($tutores as $tutor) {
+            if ($tutor['usuario_id'] == $_SESSION['user_id']) {
+                $docente_id = $tutor['id'];
+                break;
+            }
+        }
+        
+        if (!$docente_id) {
+            $_SESSION['error'] = 'No se encontró perfil de docente';
+            header('Location: index.php?c=dashboard&a=docente');
+            exit();
+        }
+        
+        $tutoriaModel = new Tutoria();
+        $solicitudes = $tutoriaModel->getSolicitudesPendientes($docente_id);
+        
+        require_once 'views/tutoria/solicitudes_docente.php';
+    }
+
+    // Aprobar solicitud
+    public function aprobar() {
+        AuthController::checkRole(['docente']);
+        
+        $id = $_GET['id'];
+        $observaciones = isset($_POST['observaciones']) ? $_POST['observaciones'] : null;
+        
+        // Obtener docente_id
+        $tutorModel = new Tutor();
+        $tutores = $tutorModel->getAll();
+        $docente_id = null;
+        
+        foreach ($tutores as $tutor) {
+            if ($tutor['usuario_id'] == $_SESSION['user_id']) {
+                $docente_id = $tutor['id'];
+                break;
+            }
+        }
+        
+        $tutoriaModel = new Tutoria();
+        
+        // Verificar que la tutoría pertenece al docente
+        if (!$tutoriaModel->perteneceADocente($id, $docente_id)) {
+            $_SESSION['error'] = 'No tienes permiso para gestionar esta tutoría';
+            header('Location: index.php?c=tutoria&a=solicitudes');
+            exit();
+        }
+        
+        if ($tutoriaModel->aprobar($id, $observaciones)) {
+            $_SESSION['success'] = 'Solicitud aprobada correctamente';
+        } else {
+            $_SESSION['error'] = 'Error al aprobar la solicitud';
+        }
+        
+        header('Location: index.php?c=tutoria&a=solicitudes');
+        exit();
+    }
+
+    // Rechazar solicitud
+    public function rechazar() {
+        AuthController::checkRole(['docente']);
+        
+        $id = $_GET['id'];
+        $motivo = isset($_POST['motivo']) ? $_POST['motivo'] : 'No especificado';
+        
+        // Obtener docente_id
+        $tutorModel = new Tutor();
+        $tutores = $tutorModel->getAll();
+        $docente_id = null;
+        
+        foreach ($tutores as $tutor) {
+            if ($tutor['usuario_id'] == $_SESSION['user_id']) {
+                $docente_id = $tutor['id'];
+                break;
+            }
+        }
+        
+        $tutoriaModel = new Tutoria();
+        
+        // Verificar que la tutoría pertenece al docente
+        if (!$tutoriaModel->perteneceADocente($id, $docente_id)) {
+            $_SESSION['error'] = 'No tienes permiso para gestionar esta tutoría';
+            header('Location: index.php?c=tutoria&a=solicitudes');
+            exit();
+        }
+        
+        if ($tutoriaModel->rechazar($id, $motivo)) {
+            $_SESSION['success'] = 'Solicitud rechazada';
+        } else {
+            $_SESSION['error'] = 'Error al rechazar la solicitud';
+        }
+        
+        header('Location: index.php?c=tutoria&a=solicitudes');
+        exit();
+    }
+
+    // Mis tutorías (docente)
+    public function mistutoriasdocente() {
+        AuthController::checkRole(['docente']);
+        
+        // Obtener docente_id
+        $tutorModel = new Tutor();
+        $tutores = $tutorModel->getAll();
+        $docente_id = null;
+        
+        foreach ($tutores as $tutor) {
+            if ($tutor['usuario_id'] == $_SESSION['user_id']) {
+                $docente_id = $tutor['id'];
+                break;
+            }
+        }
+        
+        if (!$docente_id) {
+            $_SESSION['error'] = 'No se encontró perfil de docente';
+            header('Location: index.php?c=dashboard&a=docente');
+            exit();
+        }
+        
+        $tutoriaModel = new Tutoria();
+        $tutorias = $tutoriaModel->getByDocente($docente_id);
+        
+        require_once 'views/tutoria/tutorias_docente.php';
+    }
 }
 

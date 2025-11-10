@@ -297,5 +297,193 @@ class Tutoria {
         
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
+
+    // ==========================================
+    // MÉTODOS PARA DOCENTES
+    // ==========================================
+    
+    // Obtener solicitudes pendientes del docente
+    public function getSolicitudesPendientes($docente_id) {
+        $query = "SELECT t.*, 
+                         e.nombres as estudiante_nombres,
+                         e.apellidos as estudiante_apellidos,
+                         e.codigo as estudiante_codigo,
+                         e.ciclo as estudiante_ciclo,
+                         e.email as estudiante_email
+                  FROM " . $this->table . " t
+                  INNER JOIN estudiantes e ON t.estudiante_id = e.id
+                  WHERE t.docente_id = :docente_id
+                  AND t.estado = 'pendiente'
+                  ORDER BY t.fecha ASC, t.hora ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Contar solicitudes pendientes
+    public function countPendientes($docente_id) {
+        $query = "SELECT COUNT(*) as total 
+                  FROM " . $this->table . " 
+                  WHERE docente_id = :docente_id 
+                  AND estado = 'pendiente'";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+
+    // Aprobar solicitud de tutoría
+    public function aprobar($id, $observaciones = null) {
+        $query = "UPDATE " . $this->table . " 
+                  SET estado = 'confirmada',
+                      observaciones = :observaciones
+                  WHERE id = :id 
+                  AND estado = 'pendiente'";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':observaciones', $observaciones);
+        
+        return $stmt->execute();
+    }
+
+    // Rechazar solicitud de tutoría
+    public function rechazar($id, $motivo_rechazo) {
+        $observaciones = "Rechazada. Motivo: " . $motivo_rechazo;
+        
+        $query = "UPDATE " . $this->table . " 
+                  SET estado = 'cancelada',
+                      observaciones = :observaciones
+                  WHERE id = :id 
+                  AND estado = 'pendiente'";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $id);
+        $stmt->bindParam(':observaciones', $observaciones);
+        
+        return $stmt->execute();
+    }
+
+    // Obtener tutorías del día para el docente
+    public function getTutoriasHoyDocente($docente_id) {
+        $hoy = date('Y-m-d');
+        
+        $query = "SELECT t.*, 
+                         e.nombres as estudiante_nombres,
+                         e.apellidos as estudiante_apellidos,
+                         e.codigo as estudiante_codigo,
+                         e.ciclo as estudiante_ciclo
+                  FROM " . $this->table . " t
+                  INNER JOIN estudiantes e ON t.estudiante_id = e.id
+                  WHERE t.docente_id = :docente_id
+                  AND t.fecha = :fecha
+                  AND t.estado IN ('confirmada', 'realizada')
+                  ORDER BY t.hora ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->bindParam(':fecha', $hoy);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener próximas tutorías del docente
+    public function getProximasDocente($docente_id, $limit = 10) {
+        $hoy = date('Y-m-d');
+        
+        $query = "SELECT t.*, 
+                         e.nombres as estudiante_nombres,
+                         e.apellidos as estudiante_apellidos,
+                         e.codigo as estudiante_codigo
+                  FROM " . $this->table . " t
+                  INNER JOIN estudiantes e ON t.estudiante_id = e.id
+                  WHERE t.docente_id = :docente_id
+                  AND t.fecha >= :fecha
+                  AND t.estado IN ('confirmada', 'pendiente')
+                  ORDER BY t.fecha ASC, t.hora ASC
+                  LIMIT :limit";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->bindParam(':fecha', $hoy);
+        $stmt->bindParam(':limit', $limit, PDO::PARAM_INT);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Estadísticas del docente
+    public function getEstadisticasDocente($docente_id) {
+        $query = "SELECT 
+                    COUNT(*) as total,
+                    SUM(CASE WHEN estado = 'pendiente' THEN 1 ELSE 0 END) as pendientes,
+                    SUM(CASE WHEN estado = 'confirmada' THEN 1 ELSE 0 END) as confirmadas,
+                    SUM(CASE WHEN estado = 'realizada' THEN 1 ELSE 0 END) as realizadas,
+                    SUM(CASE WHEN estado = 'cancelada' THEN 1 ELSE 0 END) as canceladas
+                  FROM " . $this->table . "
+                  WHERE docente_id = :docente_id";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        
+        return $stmt->fetch(PDO::FETCH_ASSOC);
+    }
+
+    // Obtener estudiantes únicos del docente (con detalles)
+    public function getEstudiantesUnicos($docente_id) {
+        $query = "SELECT DISTINCT 
+                         e.id, e.codigo, e.nombres, e.apellidos,
+                         e.email, e.ciclo, e.escuela,
+                         COUNT(t.id) as total_tutorias
+                  FROM estudiantes e
+                  INNER JOIN " . $this->table . " t ON e.id = t.estudiante_id
+                  WHERE t.docente_id = :docente_id
+                  GROUP BY e.id
+                  ORDER BY e.apellidos ASC";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Contar estudiantes únicos del docente (solo número)
+    public function countEstudiantesUnicos($docente_id) {
+        $query = "SELECT COUNT(DISTINCT estudiante_id) as total
+                  FROM " . $this->table . "
+                  WHERE docente_id = :docente_id";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'];
+    }
+
+    // Verificar si el docente puede gestionar esta tutoría
+    public function perteneceADocente($tutoria_id, $docente_id) {
+        $query = "SELECT COUNT(*) as total 
+                  FROM " . $this->table . " 
+                  WHERE id = :id 
+                  AND docente_id = :docente_id";
+        
+        $stmt = $this->conn->prepare($query);
+        $stmt->bindParam(':id', $tutoria_id);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        
+        $result = $stmt->fetch(PDO::FETCH_ASSOC);
+        return $result['total'] > 0;
+    }
 }
 
