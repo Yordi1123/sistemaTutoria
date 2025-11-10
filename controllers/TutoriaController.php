@@ -3,6 +3,7 @@ require_once 'controllers/AuthController.php';
 require_once 'models/Tutoria.php';
 require_once 'models/Tutor.php';
 require_once 'models/Estudiante.php';
+require_once 'models/HorarioDocente.php';
 
 class TutoriaController {
     
@@ -17,7 +18,21 @@ class TutoriaController {
         $tutorModel = new Tutor();
         $tutores = $tutorModel->getAll();
         
+        // Obtener horarios de cada tutor
+        $horarioModel = new HorarioDocente();
+        $horarios = [];
+        
+        foreach ($tutores as $tutor) {
+            $horarios[$tutor['id']] = $horarioModel->getActivosByDocente($tutor['id']);
+        }
+        
         require_once 'views/tutoria/solicitar.php';
+    }
+
+    // Guardar solicitud de tutoría (alias para compatibilidad)
+    public function guardar() {
+        AuthController::checkRole(['estudiante']);
+        $this->store();
     }
 
     // Guardar solicitud de tutoría
@@ -409,6 +424,146 @@ class TutoriaController {
         $tutorias = $tutoriaModel->getByDocente($docente_id);
         
         require_once 'views/tutoria/tutorias_docente.php';
+    }
+
+    // ==========================================
+    // REPROGRAMAR TUTORÍA (ESTUDIANTE)
+    // ==========================================
+    
+    public function reprogramar() {
+        AuthController::checkRole(['estudiante']);
+        
+        $id = $_GET['id'];
+        
+        // Verificar que la tutoría existe y pertenece al estudiante
+        $tutoriaModel = new Tutoria();
+        $tutoria = $tutoriaModel->getById($id);
+        
+        if (!$tutoria) {
+            $_SESSION['error'] = 'Tutoría no encontrada';
+            header('Location: index.php?c=tutoria&a=mistutorias');
+            exit();
+        }
+        
+        // Verificar que pertenece al estudiante logueado
+        $estudianteModel = new Estudiante();
+        $estudiantes = $estudianteModel->getAll();
+        $estudiante_id = null;
+        
+        foreach ($estudiantes as $est) {
+            if ($est['usuario_id'] == $_SESSION['user_id']) {
+                $estudiante_id = $est['id'];
+                break;
+            }
+        }
+        
+        if ($tutoria['estudiante_id'] != $estudiante_id) {
+            $_SESSION['error'] = 'No tienes permiso para reprogramar esta tutoría';
+            header('Location: index.php?c=tutoria&a=mistutorias');
+            exit();
+        }
+        
+        // Solo se puede reprogramar si está pendiente o confirmada
+        if (!in_array($tutoria['estado'], ['pendiente', 'confirmada'])) {
+            $_SESSION['error'] = 'Solo puedes reprogramar tutorías pendientes o confirmadas';
+            header('Location: index.php?c=tutoria&a=mistutorias');
+            exit();
+        }
+        
+        // Obtener lista de tutores y horarios
+        $tutorModel = new Tutor();
+        $tutores = $tutorModel->getAll();
+        
+        $horarioModel = new HorarioDocente();
+        $horarios = [];
+        
+        foreach ($tutores as $tutor) {
+            $horarios[$tutor['id']] = $horarioModel->getActivosByDocente($tutor['id']);
+        }
+        
+        require_once 'views/tutoria/reprogramar.php';
+    }
+
+    // Guardar reprogramación
+    public function actualizarProgramacion() {
+        AuthController::checkRole(['estudiante']);
+        
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $id = $_POST['id'];
+            $nueva_fecha = $_POST['fecha'];
+            $nueva_hora = $_POST['hora'];
+            $motivo_reprogramacion = trim($_POST['motivo_reprogramacion'] ?? '');
+            
+            // Validaciones
+            $errors = [];
+            
+            if (empty($nueva_fecha) || empty($nueva_hora)) {
+                $errors[] = 'Fecha y hora son obligatorias';
+            }
+            
+            // Validar que la fecha sea futura
+            if (strtotime($nueva_fecha) < strtotime(date('Y-m-d'))) {
+                $errors[] = 'La fecha debe ser hoy o futura';
+            }
+            
+            if (!empty($errors)) {
+                $_SESSION['errors'] = $errors;
+                header('Location: index.php?c=tutoria&a=reprogramar&id=' . $id);
+                exit();
+            }
+            
+            // Verificar permisos
+            $tutoriaModel = new Tutoria();
+            $tutoria = $tutoriaModel->getById($id);
+            
+            $estudianteModel = new Estudiante();
+            $estudiantes = $estudianteModel->getAll();
+            $estudiante_id = null;
+            
+            foreach ($estudiantes as $est) {
+                if ($est['usuario_id'] == $_SESSION['user_id']) {
+                    $estudiante_id = $est['id'];
+                    break;
+                }
+            }
+            
+            if ($tutoria['estudiante_id'] != $estudiante_id) {
+                $_SESSION['error'] = 'No tienes permiso para modificar esta tutoría';
+                header('Location: index.php?c=tutoria&a=mistutorias');
+                exit();
+            }
+            
+            // Actualizar tutoría
+            $conn = (new Database())->connect();
+            
+            $observaciones = $tutoria['observaciones'] ?? '';
+            if (!empty($motivo_reprogramacion)) {
+                $observaciones .= "\n\nReprogramada el " . date('d/m/Y H:i') . ": " . $motivo_reprogramacion;
+            }
+            
+            $query = "UPDATE tutorias 
+                      SET fecha = :fecha, 
+                          hora = :hora,
+                          observaciones = :observaciones,
+                          estado = 'pendiente'
+                      WHERE id = :id";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':fecha', $nueva_fecha);
+            $stmt->bindParam(':hora', $nueva_hora);
+            $stmt->bindParam(':observaciones', $observaciones);
+            $stmt->bindParam(':id', $id);
+            
+            if ($stmt->execute()) {
+                $_SESSION['success'] = 'Tutoría reprogramada exitosamente. El tutor deberá confirmar nuevamente.';
+                header('Location: index.php?c=tutoria&a=mistutorias');
+                exit();
+            } else {
+                $_SESSION['error'] = 'Error al reprogramar la tutoría';
+                header('Location: index.php?c=tutoria&a=reprogramar&id=' . $id);
+                exit();
+            }
+        }
     }
 }
 

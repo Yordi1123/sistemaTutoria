@@ -1,68 +1,91 @@
 <?php require_once 'views/layout/header.php'; ?>
 
 <div class="container">
-    <h2>📝 Solicitar Tutoría</h2>
-    <p>Completa el formulario para solicitar una sesión de tutoría</p>
+    <div class="page-header">
+        <h2>📝 Solicitar Tutoría</h2>
+        <a href="index.php?c=dashboard&a=estudiante" class="btn">← Volver</a>
+    </div>
 
     <?php if (isset($_SESSION['errors'])): ?>
-        <div class="alert alert-error">
+        <div class="alert alert-danger">
             <ul>
                 <?php foreach ($_SESSION['errors'] as $error): ?>
-                    <li><?php echo $error; ?></li>
+                    <li><?= htmlspecialchars($error) ?></li>
                 <?php endforeach; ?>
             </ul>
-            <?php unset($_SESSION['errors']); ?>
         </div>
+        <?php unset($_SESSION['errors']); ?>
     <?php endif; ?>
 
     <?php if (isset($_SESSION['error'])): ?>
-        <div class="alert alert-error">
-            <?php echo $_SESSION['error']; unset($_SESSION['error']); ?>
+        <div class="alert alert-danger">
+            <?= htmlspecialchars($_SESSION['error']) ?>
         </div>
+        <?php unset($_SESSION['error']); ?>
     <?php endif; ?>
 
-    <form action="index.php?c=tutoria&a=store" method="POST" class="form">
+    <!-- Instrucciones -->
+    <div class="card">
+        <div class="card-header">
+            <h3>ℹ️ Instrucciones</h3>
+        </div>
+        <div class="card-body">
+            <ol>
+                <li><strong>Selecciona un tutor</strong> para ver su disponibilidad horaria</li>
+                <li><strong>Elige el día</strong> que mejor se adapte a tu horario</li>
+                <li><strong>Selecciona la hora</strong> dentro de los horarios disponibles del tutor</li>
+                <li><strong>Describe el motivo</strong> para que el tutor pueda prepararse mejor</li>
+            </ol>
+        </div>
+    </div>
+
+    <form action="index.php?c=tutoria&a=guardar" method="POST" class="form-card">
         
         <div class="form-group">
-            <label for="docente_id">Tutor / Docente *</label>
-            <select id="docente_id" name="docente_id" required>
+            <label for="docente_id" class="required">Tutor / Docente</label>
+            <select id="docente_id" name="docente_id" required onchange="cargarHorarios()">
                 <option value="">Selecciona un tutor</option>
                 <?php foreach ($tutores as $tutor): ?>
-                    <option value="<?php echo $tutor['id']; ?>" <?php echo (isset($_SESSION['old']['docente_id']) && $_SESSION['old']['docente_id'] == $tutor['id']) ? 'selected' : ''; ?>>
-                        <?php echo htmlspecialchars($tutor['apellidos'] . ', ' . $tutor['nombres']); ?> 
-                        - <?php echo htmlspecialchars($tutor['especialidad']); ?>
+                    <option value="<?= $tutor['id'] ?>" 
+                            data-horarios='<?= isset($horarios[$tutor['id']]) ? json_encode($horarios[$tutor['id']]) : '[]' ?>'
+                            <?= (isset($_SESSION['old']['docente_id']) && $_SESSION['old']['docente_id'] == $tutor['id']) ? 'selected' : '' ?>>
+                        <?= htmlspecialchars($tutor['apellidos'] . ', ' . $tutor['nombres']) ?> 
+                        - <?= htmlspecialchars($tutor['especialidad']) ?>
                     </option>
                 <?php endforeach; ?>
             </select>
         </div>
 
+        <!-- Horarios disponibles -->
+        <div id="horarios-disponibles" style="display: none;">
+            <div class="card" style="background: #f0f8ff; border-left: 4px solid #2c5aa0;">
+                <div class="card-header">
+                    <h3>📅 Horarios Disponibles</h3>
+                </div>
+                <div class="card-body">
+                    <div id="horarios-contenido"></div>
+                </div>
+            </div>
+        </div>
+
         <div class="form-group">
-            <label for="fecha">Fecha *</label>
+            <label for="fecha" class="required">Fecha</label>
             <input type="date" 
                    id="fecha" 
                    name="fecha" 
-                   min="<?php echo date('Y-m-d'); ?>"
-                   value="<?php echo isset($_SESSION['old']['fecha']) ? htmlspecialchars($_SESSION['old']['fecha']) : ''; ?>"
+                   min="<?= date('Y-m-d') ?>"
+                   value="<?= isset($_SESSION['old']['fecha']) ? htmlspecialchars($_SESSION['old']['fecha']) : '' ?>"
+                   onchange="filtrarHorasPorDia()"
                    required>
             <small>Selecciona una fecha a partir de hoy</small>
         </div>
 
         <div class="form-group">
-            <label for="hora">Hora *</label>
-            <select id="hora" name="hora" required>
-                <option value="">Selecciona una hora</option>
-                <option value="08:00:00">08:00 AM</option>
-                <option value="09:00:00">09:00 AM</option>
-                <option value="10:00:00">10:00 AM</option>
-                <option value="11:00:00">11:00 AM</option>
-                <option value="12:00:00">12:00 PM</option>
-                <option value="13:00:00">01:00 PM</option>
-                <option value="14:00:00">02:00 PM</option>
-                <option value="15:00:00">03:00 PM</option>
-                <option value="16:00:00">04:00 PM</option>
-                <option value="17:00:00">05:00 PM</option>
-                <option value="18:00:00">06:00 PM</option>
+            <label for="hora" class="required">Hora</label>
+            <select id="hora" name="hora" required disabled>
+                <option value="">Primero selecciona un tutor y fecha</option>
             </select>
+            <small id="hora-ayuda">Las horas disponibles dependen del horario del tutor</small>
         </div>
 
         <div class="form-group">
@@ -77,12 +100,168 @@
 
         <div class="form-actions">
             <button type="submit" class="btn btn-primary">📝 Enviar Solicitud</button>
-            <a href="index.php?c=dashboard&a=estudiante" class="btn">Cancelar</a>
+            <a href="index.php?c=dashboard&a=estudiante" class="btn btn-secondary">Cancelar</a>
         </div>
     </form>
 
     <?php unset($_SESSION['old']); ?>
 </div>
+
+<script>
+let horariosDocente = [];
+const diasSemana = ['Domingo', 'Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'];
+
+function cargarHorarios() {
+    const select = document.getElementById('docente_id');
+    const option = select.options[select.selectedIndex];
+    
+    if (select.value === '') {
+        document.getElementById('horarios-disponibles').style.display = 'none';
+        document.getElementById('hora').disabled = true;
+        document.getElementById('hora').innerHTML = '<option value="">Primero selecciona un tutor y fecha</option>';
+        horariosDocente = [];
+        return;
+    }
+    
+    try {
+        horariosDocente = JSON.parse(option.dataset.horarios || '[]');
+        mostrarHorariosDisponibles();
+        filtrarHorasPorDia();
+    } catch (e) {
+        console.error('Error al cargar horarios:', e);
+        horariosDocente = [];
+    }
+}
+
+function mostrarHorariosDisponibles() {
+    const contenedor = document.getElementById('horarios-contenido');
+    
+    if (horariosDocente.length === 0) {
+        contenedor.innerHTML = '<p class="text-muted">⚠️ Este tutor aún no ha configurado sus horarios disponibles. Puedes solicitar la tutoría de todos modos.</p>';
+        document.getElementById('horarios-disponibles').style.display = 'block';
+        return;
+    }
+    
+    // Agrupar por día
+    const porDia = {};
+    horariosDocente.forEach(h => {
+        if (!porDia[h.dia_semana]) {
+            porDia[h.dia_semana] = [];
+        }
+        porDia[h.dia_semana].push(h);
+    });
+    
+    let html = '<div class="horarios-grid">';
+    ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado'].forEach(dia => {
+        if (porDia[dia]) {
+            html += `<div class="horario-dia-card">
+                <strong>${dia}</strong><br>`;
+            porDia[dia].forEach(h => {
+                html += `<span class="horario-rango">${h.hora_inicio.substring(0,5)} - ${h.hora_fin.substring(0,5)}</span><br>`;
+            });
+            html += '</div>';
+        }
+    });
+    html += '</div>';
+    
+    contenedor.innerHTML = html;
+    document.getElementById('horarios-disponibles').style.display = 'block';
+}
+
+function filtrarHorasPorDia() {
+    const fechaInput = document.getElementById('fecha');
+    const horaSelect = document.getElementById('hora');
+    
+    if (!fechaInput.value || horariosDocente.length === 0) {
+        horaSelect.disabled = false;
+        horaSelect.innerHTML = `
+            <option value="">Selecciona una hora</option>
+            <option value="08:00:00">08:00 AM</option>
+            <option value="09:00:00">09:00 AM</option>
+            <option value="10:00:00">10:00 AM</option>
+            <option value="11:00:00">11:00 AM</option>
+            <option value="12:00:00">12:00 PM</option>
+            <option value="13:00:00">01:00 PM</option>
+            <option value="14:00:00">02:00 PM</option>
+            <option value="15:00:00">03:00 PM</option>
+            <option value="16:00:00">04:00 PM</option>
+            <option value="17:00:00">05:00 PM</option>
+            <option value="18:00:00">06:00 PM</option>
+        `;
+        return;
+    }
+    
+    const fecha = new Date(fechaInput.value + 'T00:00:00');
+    const diaSemana = diasSemana[fecha.getDay()];
+    
+    // Filtrar horarios del día seleccionado
+    const horariosDelDia = horariosDocente.filter(h => h.dia_semana === diaSemana);
+    
+    if (horariosDelDia.length === 0) {
+        horaSelect.innerHTML = '<option value="">No hay horarios disponibles para este día</option>';
+        horaSelect.disabled = true;
+        return;
+    }
+    
+    horaSelect.disabled = false;
+    horaSelect.innerHTML = '<option value="">Selecciona una hora</option>';
+    
+    horariosDelDia.forEach(horario => {
+        const inicio = horario.hora_inicio.substring(0,5);
+        const fin = horario.hora_fin.substring(0,5);
+        
+        // Generar opciones cada hora dentro del rango
+        const [horaIni, minIni] = inicio.split(':').map(Number);
+        const [horaFin, minFin] = fin.split(':').map(Number);
+        
+        for (let h = horaIni; h < horaFin; h++) {
+            const horaFormato = h.toString().padStart(2, '0') + ':00:00';
+            const horaDisplay = h < 12 ? h + ':00 AM' : (h === 12 ? '12:00 PM' : (h-12) + ':00 PM');
+            horaSelect.innerHTML += `<option value="${horaFormato}">${horaDisplay}</option>`;
+        }
+    });
+}
+
+// Cargar horarios si hay un docente preseleccionado
+window.addEventListener('load', function() {
+    const docenteSelect = document.getElementById('docente_id');
+    if (docenteSelect.value) {
+        cargarHorarios();
+    }
+});
+</script>
+
+<style>
+.horarios-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 15px;
+    margin-top: 10px;
+}
+
+.horario-dia-card {
+    padding: 12px;
+    background: white;
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    font-size: 0.9rem;
+}
+
+.horario-dia-card strong {
+    color: #2c5aa0;
+    display: block;
+    margin-bottom: 8px;
+}
+
+.horario-rango {
+    display: inline-block;
+    padding: 4px 8px;
+    background: #e3f2fd;
+    border-radius: 4px;
+    font-size: 0.85rem;
+    margin: 2px 0;
+}
+</style>
 
 <?php require_once 'views/layout/footer.php'; ?>
 

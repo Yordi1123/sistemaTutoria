@@ -66,11 +66,15 @@
                     </td>
                     <td>
                         <a href="index.php?c=tutoria&a=detalle&id=<?php echo $tutoria['id']; ?>" 
-                           class="btn-small">Ver Detalle</a>
+                           class="btn-small btn-primary">👁️ Ver</a>
+                        <?php if (in_array($tutoria['estado'], ['pendiente', 'confirmada'])): ?>
+                            <a href="index.php?c=tutoria&a=reprogramar&id=<?php echo $tutoria['id']; ?>" 
+                               class="btn-small btn-warning">📅 Reprogramar</a>
+                        <?php endif; ?>
                         <?php if ($tutoria['estado'] == 'pendiente'): ?>
                             <a href="index.php?c=tutoria&a=cancelar&id=<?php echo $tutoria['id']; ?>" 
                                class="btn-small btn-danger"
-                               onclick="return confirm('¿Estás seguro de cancelar esta tutoría?')">Cancelar</a>
+                               onclick="return confirm('¿Estás seguro de cancelar esta tutoría?')">❌ Cancelar</a>
                         <?php endif; ?>
                     </td>
                 </tr>
