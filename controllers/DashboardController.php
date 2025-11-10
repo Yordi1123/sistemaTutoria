@@ -42,11 +42,30 @@ class DashboardController {
         // Verificar autenticación y rol
         AuthController::checkRole(['estudiante']);
         
-        // Obtener información del estudiante
+        // Obtener estudiante_id del usuario logueado
+        require_once 'models/Tutoria.php';
         $estudianteModel = new Estudiante();
         $estudiantes = $estudianteModel->getAll();
+        $estudiante_id = null;
         
-        // Aquí puedes agregar más lógica específica del estudiante
+        foreach ($estudiantes as $est) {
+            if ($est['usuario_id'] == $_SESSION['user_id']) {
+                $estudiante_id = $est['id'];
+                break;
+            }
+        }
+        
+        // Obtener estadísticas y próximas tutorías
+        $estadisticas = ['pendientes' => 0, 'realizadas' => 0, 'total' => 0];
+        $proximasTutorias = [];
+        $tutoriasHoy = [];
+        
+        if ($estudiante_id) {
+            $tutoriaModel = new Tutoria();
+            $estadisticas = $tutoriaModel->getEstadisticas($estudiante_id);
+            $proximasTutorias = $tutoriaModel->getProximas($estudiante_id, 5);
+            $tutoriasHoy = $tutoriaModel->getTutoriasHoy($estudiante_id);
+        }
         
         require_once 'views/dashboard/estudiante.php';
     }
