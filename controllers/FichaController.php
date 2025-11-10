@@ -3,6 +3,7 @@ require_once 'controllers/AuthController.php';
 require_once 'models/FichaTutoria.php';
 require_once 'models/Tutoria.php';
 require_once 'models/Tutor.php';
+require_once 'models/Estudiante.php';
 
 class FichaController {
     
@@ -14,6 +15,20 @@ class FichaController {
         foreach ($tutores as $tutor) {
             if ($tutor['usuario_id'] == $_SESSION['user_id']) {
                 return $tutor['id'];
+            }
+        }
+        
+        return null;
+    }
+
+    // Obtener estudiante_id del usuario logueado
+    private function getEstudianteId() {
+        $estudianteModel = new Estudiante();
+        $estudiantes = $estudianteModel->getAll();
+        
+        foreach ($estudiantes as $estudiante) {
+            if ($estudiante['usuario_id'] == $_SESSION['user_id']) {
+                return $estudiante['id'];
             }
         }
         
@@ -225,7 +240,7 @@ class FichaController {
     }
 
     // ==========================================
-    // MIS FICHAS
+    // MIS FICHAS (DOCENTE)
     // ==========================================
     
     public function misfichas() {
@@ -243,6 +258,27 @@ class FichaController {
         $fichas = $fichaModel->getByDocente($docente_id);
         
         require_once 'views/ficha/misfichas.php';
+    }
+
+    // ==========================================
+    // MIS FICHAS (ESTUDIANTE)
+    // ==========================================
+    
+    public function misfichasestudiante() {
+        AuthController::checkRole(['estudiante']);
+        
+        $estudiante_id = $this->getEstudianteId();
+        
+        if (!$estudiante_id) {
+            $_SESSION['error'] = 'No se encontró perfil de estudiante';
+            header('Location: index.php?c=dashboard&a=estudiante');
+            exit();
+        }
+        
+        $fichaModel = new FichaTutoria();
+        $fichas = $fichaModel->getByEstudiante($estudiante_id);
+        
+        require_once 'views/ficha/misfichas_estudiante.php';
     }
 }
 

@@ -1,275 +1,226 @@
-<!DOCTYPE html>
-<html lang="es">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Estudiante - Sistema de Tutoría</title>
-    <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
-</head>
-<body>
+<?php 
+require_once 'models/Estudiante.php';
+require_once 'models/Tutoria.php';
+require_once 'models/FichaTutoria.php';
+
+// Obtener estudiante_id del usuario logueado
+$estudianteModel = new Estudiante();
+$estudiantes = $estudianteModel->getAll();
+$estudiante_id = null;
+$estudiante_info = null;
+
+foreach ($estudiantes as $estudiante) {
+    if ($estudiante['usuario_id'] == $_SESSION['user_id']) {
+        $estudiante_id = $estudiante['id'];
+        $estudiante_info = $estudiante;
+        break;
+    }
+}
+
+// Obtener estadísticas y datos
+$tutoriaModel = new Tutoria();
+$fichaModel = new FichaTutoria();
+
+$estadisticas = ['total' => 0, 'pendientes' => 0, 'confirmadas' => 0, 'realizadas' => 0, 'canceladas' => 0];
+$tutoriasHoy = [];
+$proximasTutorias = [];
+$fichas_total = 0;
+
+if ($estudiante_id) {
+    $estadisticas = $tutoriaModel->getEstadisticas($estudiante_id);
+    $tutoriasHoy = $tutoriaModel->getTutoriasHoy($estudiante_id);
+    $proximasTutorias = $tutoriaModel->getProximas($estudiante_id);
+    $fichas_total = count($fichaModel->getByEstudiante($estudiante_id));
+}
+
+require_once 'views/layout/header.php'; 
+?>
+
+<div class="container">
     
-    <!-- Navbar -->
-    <header class="dashboard-header">
-        <nav>
-            <div class="nav-brand">
-                <h1>🎓 Sistema de Tutoría</h1>
-            </div>
-            <ul class="nav-menu">
-                <li><a href="index.php?c=dashboard&a=estudiante" class="active">Dashboard</a></li>
-                <li><a href="index.php?c=tutor">Ver Tutores</a></li>
-                <li><a href="index.php?c=tutoria&a=mistutorias">Mis Tutorías</a></li>
-                <li class="nav-user">
-                    <span>👤 <?php echo htmlspecialchars($_SESSION['username']); ?> (Estudiante)</span>
-                    <a href="index.php?c=auth&a=logout" class="btn btn-small btn-danger">Salir</a>
-                </li>
-            </ul>
-        </nav>
-    </header>
+    <?php if (isset($_SESSION['success'])): ?>
+        <div class="alert alert-success">
+            <?= htmlspecialchars($_SESSION['success']) ?>
+        </div>
+        <?php unset($_SESSION['success']); ?>
+    <?php endif; ?>
 
-    <main class="dashboard-main">
-        <div class="container">
+    <div class="dashboard-welcome">
+        <h2>Bienvenido, <?= isset($estudiante_info) ? htmlspecialchars($estudiante_info['nombres']) : 'Estudiante' ?></h2>
+        <p>Gestiona tus tutorías y aprovecha al máximo tu aprendizaje</p>
+    </div>
+
+    <!-- Alertas -->
+    <?php if (!empty($tutoriasHoy)): ?>
+        <div class="alert alert-warning">
+            <strong>🔥 ¡Importante!</strong> Tienes <?= count($tutoriasHoy) ?> tutoría<?= count($tutoriasHoy) > 1 ? 's' : '' ?> programada<?= count($tutoriasHoy) > 1 ? 's' : '' ?> para hoy.
+            <a href="index.php?c=tutoria&a=asistencia" style="color: #856404; text-decoration: underline; margin-left: 10px;">
+                Confirmar asistencia →
+            </a>
+        </div>
+    <?php endif; ?>
+
+    <!-- Estadísticas del Estudiante -->
+    <div class="stats-grid">
+        
+        <div class="stat-card stat-warning">
+            <div class="stat-icon">⏳</div>
+            <div class="stat-content">
+                <h3><?= $estadisticas['pendientes'] + $estadisticas['confirmadas'] ?></h3>
+                <p>Tutorías Pendientes</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-success">
+            <div class="stat-icon">✅</div>
+            <div class="stat-content">
+                <h3><?= $estadisticas['realizadas'] ?></h3>
+                <p>Tutorías Realizadas</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-info">
+            <div class="stat-icon">📅</div>
+            <div class="stat-content">
+                <h3><?= count($tutoriasHoy) ?></h3>
+                <p>Tutorías Hoy</p>
+            </div>
+        </div>
+
+        <div class="stat-card stat-primary">
+            <div class="stat-icon">📚</div>
+            <div class="stat-content">
+                <h3><?= $estadisticas['total'] ?></h3>
+                <p>Total de Tutorías</p>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- Acciones Rápidas -->
+    <div class="dashboard-section">
+        <h3>Acciones Rápidas</h3>
+        <div class="action-grid">
             
-            <?php if (isset($_SESSION['success'])): ?>
-                <div class="alert alert-success">
-                    <?php echo $_SESSION['success']; unset($_SESSION['success']); ?>
-                </div>
-            <?php endif; ?>
+            <a href="index.php?c=tutoria&a=solicitar" class="action-card">
+                <div class="action-icon">📝</div>
+                <h4>Solicitar Tutoría</h4>
+                <p>Agenda una sesión con un tutor</p>
+            </a>
 
-            <div class="dashboard-welcome">
-                <h2>Bienvenido, Estudiante</h2>
-                <p>Gestiona tus tutorías y aprovecha al máximo tu aprendizaje</p>
-            </div>
+            <a href="index.php?c=tutoria&a=mistutorias" class="action-card">
+                <div class="action-icon">📅</div>
+                <h4>Mis Tutorías</h4>
+                <p>Ver tutorías programadas</p>
+            </a>
 
-            <!-- Estadísticas del Estudiante -->
-            <div class="stats-grid">
-                
-                <div class="stat-card">
-                    <div class="stat-icon">⏳</div>
-                    <div class="stat-content">
-                        <h3><?php echo $estadisticas['pendientes'] + $estadisticas['confirmadas']; ?></h3>
-                        <p>Tutorías Pendientes</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">✅</div>
-                    <div class="stat-content">
-                        <h3><?php echo $estadisticas['realizadas']; ?></h3>
-                        <p>Tutorías Realizadas</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">📅</div>
-                    <div class="stat-content">
-                        <h3><?php echo count($tutoriasHoy); ?></h3>
-                        <p>Tutorías Hoy</p>
-                    </div>
-                </div>
-
-                <div class="stat-card">
-                    <div class="stat-icon">📚</div>
-                    <div class="stat-content">
-                        <h3><?php echo $estadisticas['total']; ?></h3>
-                        <p>Total de Tutorías</p>
-                    </div>
-                </div>
-
-            </div>
-
-            <!-- Tutorías de Hoy -->
-            <?php if (!empty($tutoriasHoy)): ?>
-            <div class="dashboard-section">
-                <h3>🔥 Tutorías de Hoy</h3>
-                <div class="alert" style="background: #fff3cd; border-left: 4px solid #ffc107; color: #856404;">
-                    <strong>¡Importante!</strong> Tienes <?php echo count($tutoriasHoy); ?> tutoría(s) programada(s) para hoy.
-                    <a href="index.php?c=tutoria&a=asistencia" class="btn btn-primary" style="margin-left: 1rem;">
-                        Ver y Confirmar Asistencia
-                    </a>
-                </div>
-            </div>
-            <?php endif; ?>
-
-            <!-- Acciones Rápidas -->
-            <div class="dashboard-section">
-                <h3>Acciones Rápidas</h3>
-                <div class="action-grid">
-                    
-                    <a href="index.php?c=tutoria&a=solicitar" class="action-card">
-                        <div class="action-icon">📝</div>
-                        <h4>Solicitar Tutoría</h4>
-                        <p>Agenda una sesión con un tutor</p>
-                    </a>
-
-                    <a href="index.php?c=tutoria&a=asistencia" class="action-card">
-                        <div class="action-icon">✅</div>
-                        <h4>Confirmar Asistencia</h4>
-                        <p>Confirma tu asistencia a tutorías de hoy</p>
-                    </a>
-
-                    <a href="index.php?c=tutor" class="action-card">
-                        <div class="action-icon">👨‍🏫</div>
-                        <h4>Ver Tutores</h4>
-                        <p>Consulta la lista de tutores disponibles</p>
-                    </a>
-
-                    <a href="index.php?c=tutoria&a=historial" class="action-card">
-                        <div class="action-icon">📊</div>
-                        <h4>Mi Historial</h4>
-                        <p>Ver tutorías y estadísticas</p>
-                    </a>
-
-                </div>
-            </div>
-
-            <!-- Próximas Tutorías -->
-            <div class="dashboard-section">
-                <h3>📅 Próximas Tutorías</h3>
-                <?php if (!empty($proximasTutorias)): ?>
-                    <div class="proximas-tutorias">
-                        <?php foreach ($proximasTutorias as $tutoria): ?>
-                            <div class="tutoria-item">
-                                <div class="tutoria-fecha">
-                                    <strong><?php echo date('d', strtotime($tutoria['fecha'])); ?></strong>
-                                    <span><?php echo date('M', strtotime($tutoria['fecha'])); ?></span>
-                                </div>
-                                <div class="tutoria-info">
-                                    <h4><?php echo date('h:i A', strtotime($tutoria['hora'])); ?> - 
-                                        <?php echo htmlspecialchars($tutoria['tutor_apellidos'] . ', ' . $tutoria['tutor_nombres']); ?>
-                                    </h4>
-                                    <p><?php echo htmlspecialchars($tutoria['tutor_especialidad']); ?></p>
-                                    <small><?php echo htmlspecialchars(substr($tutoria['motivo'], 0, 60)) . '...'; ?></small>
-                                </div>
-                                <div class="tutoria-estado">
-                                    <span class="badge badge-<?php echo $tutoria['estado'] == 'confirmada' ? 'info' : 'warning'; ?>">
-                                        <?php echo ucfirst($tutoria['estado']); ?>
-                                    </span>
-                                </div>
-                            </div>
-                        <?php endforeach; ?>
-                    </div>
-                <?php else: ?>
-                    <div class="info-box">
-                        <p class="text-muted">No tienes tutorías programadas próximamente</p>
-                        <a href="index.php?c=tutoria&a=solicitar" class="btn btn-primary">Solicitar Tutoría</a>
-                    </div>
+            <a href="index.php?c=tutoria&a=asistencia" class="action-card">
+                <div class="action-icon">✅</div>
+                <h4>Confirmar Asistencia</h4>
+                <p>Registrar asistencia a tutorías</p>
+                <?php if (!empty($tutoriasHoy)): ?>
+                    <span class="badge badge-warning"><?= count($tutoriasHoy) ?></span>
                 <?php endif; ?>
-            </div>
+            </a>
 
-            <!-- Avisos -->
-            <div class="dashboard-section">
-                <h3>📌 Avisos</h3>
-                <div class="info-box">
-                    <p>✅ Bienvenido al sistema de tutoría UNS</p>
-                    <p>📅 Recuerda programar tus tutorías con anticipación</p>
-                    <p>⏰ Confirma tu asistencia el día de la tutoría</p>
-                </div>
-            </div>
+            <a href="index.php?c=tutoria&a=historial" class="action-card">
+                <div class="action-icon">📊</div>
+                <h4>Mi Historial</h4>
+                <p>Ver tutorías y estadísticas</p>
+            </a>
+
+            <a href="index.php?c=ficha&a=misfichasestudiante" class="action-card">
+                <div class="action-icon">📋</div>
+                <h4>Mis Fichas</h4>
+                <p>Ver fichas de tutoría</p>
+                <?php if ($fichas_total > 0): ?>
+                    <span class="badge badge-success"><?= $fichas_total ?></span>
+                <?php endif; ?>
+            </a>
+
+            <a href="index.php?c=tutor" class="action-card">
+                <div class="action-icon">👨‍🏫</div>
+                <h4>Ver Tutores</h4>
+                <p>Consultar lista de tutores</p>
+            </a>
 
         </div>
-    </main>
+    </div>
 
-    <footer>
-        <p>&copy; <?php echo date('Y'); ?> - Sistema de Tutoría UNS</p>
-    </footer>
+    <!-- Próximas Tutorías -->
+    <div class="dashboard-section">
+        <h3>📅 Próximas Tutorías</h3>
+        <?php if (empty($proximasTutorias)): ?>
+            <div class="info-box">
+                <p class="text-muted">No tienes tutorías programadas próximamente</p>
+                <a href="index.php?c=tutoria&a=solicitar" class="btn btn-primary">Solicitar Tutoría</a>
+            </div>
+        <?php else: ?>
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Fecha</th>
+                            <th>Hora</th>
+                            <th>Docente</th>
+                            <th>Especialidad</th>
+                            <th>Estado</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php foreach (array_slice($proximasTutorias, 0, 5) as $tutoria): ?>
+                        <tr>
+                            <td><?= date('d/m/Y', strtotime($tutoria['fecha'])) ?></td>
+                            <td><?= date('H:i', strtotime($tutoria['hora'])) ?></td>
+                            <td><?= htmlspecialchars($tutoria['tutor_nombres'] . ' ' . $tutoria['tutor_apellidos']) ?></td>
+                            <td><?= htmlspecialchars($tutoria['tutor_especialidad']) ?></td>
+                            <td>
+                                <?php
+                                    $badge_class = 'badge-warning';
+                                    if ($tutoria['estado'] == 'confirmada') $badge_class = 'badge-info';
+                                    elseif ($tutoria['estado'] == 'realizada') $badge_class = 'badge-success';
+                                    elseif ($tutoria['estado'] == 'cancelada') $badge_class = 'badge-danger';
+                                ?>
+                                <span class="badge <?= $badge_class ?>">
+                                    <?= ucfirst($tutoria['estado']) ?>
+                                </span>
+                            </td>
+                            <td>
+                                <a href="index.php?c=tutoria&a=detalle&id=<?= $tutoria['id'] ?>" 
+                                   class="btn btn-sm btn-primary">
+                                    Ver detalle
+                                </a>
+                            </td>
+                        </tr>
+                        <?php endforeach; ?>
+                    </tbody>
+                </table>
+            </div>
+            <?php if (count($proximasTutorias) > 5): ?>
+                <div style="text-align: center; margin-top: 15px;">
+                    <a href="index.php?c=tutoria&a=mistutorias" class="btn btn-secondary">
+                        Ver todas las tutorías (<?= count($proximasTutorias) ?>)
+                    </a>
+                </div>
+            <?php endif; ?>
+        <?php endif; ?>
+    </div>
 
-    <script src="<?php echo BASE_URL; ?>assets/js/main.js"></script>
-</body>
-</html>
+    <!-- Recursos Útiles -->
+    <div class="dashboard-section">
+        <h3>💡 Recursos Útiles</h3>
+        <div class="info-box">
+            <ul style="margin: 0; padding-left: 20px;">
+                <li>📝 Solicita tus tutorías con anticipación para mejor disponibilidad</li>
+                <li>⏰ Confirma tu asistencia el día de la tutoría para mantener tu sesión</li>
+                <li>📋 Revisa tus fichas de tutoría para conocer tu progreso</li>
+                <li>📊 Consulta tu historial para ver estadísticas completas</li>
+                <li>👨‍🏫 Explora la lista de tutores para conocer sus especialidades</li>
+            </ul>
+        </div>
+    </div>
 
-<style>
-.proximas-tutorias {
-    display: flex;
-    flex-direction: column;
-    gap: 1rem;
-}
+</div>
 
-.tutoria-item {
-    background: white;
-    padding: 1.5rem;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    gap: 1.5rem;
-    box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-    transition: transform 0.3s, box-shadow 0.3s;
-}
-
-.tutoria-item:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 4px 8px rgba(0,0,0,0.1);
-}
-
-.tutoria-fecha {
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-    color: white;
-    padding: 1rem;
-    border-radius: 8px;
-    text-align: center;
-    min-width: 70px;
-}
-
-.tutoria-fecha strong {
-    display: block;
-    font-size: 1.8rem;
-    line-height: 1;
-}
-
-.tutoria-fecha span {
-    display: block;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-}
-
-.tutoria-info {
-    flex: 1;
-}
-
-.tutoria-info h4 {
-    margin: 0 0 0.5rem 0;
-    color: #2c3e50;
-}
-
-.tutoria-info p {
-    margin: 0;
-    color: #7f8c8d;
-}
-
-.tutoria-info small {
-    color: #95a5a6;
-}
-
-.tutoria-estado {
-    min-width: 100px;
-    text-align: right;
-}
-
-.badge {
-    display: inline-block;
-    padding: 0.35rem 0.85rem;
-    border-radius: 12px;
-    font-size: 0.85rem;
-    font-weight: 600;
-}
-
-.badge-warning {
-    background: #fff3cd;
-    color: #856404;
-}
-
-.badge-info {
-    background: #cfe2ff;
-    color: #084298;
-}
-
-@media (max-width: 768px) {
-    .tutoria-item {
-        flex-direction: column;
-        text-align: center;
-    }
-    
-    .tutoria-estado {
-        text-align: center;
-    }
-}
-</style>
+<?php require_once 'views/layout/footer.php'; ?>
