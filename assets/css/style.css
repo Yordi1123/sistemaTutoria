@@ -597,6 +597,8 @@ footer {
     gap: 1.5rem;
     box-shadow: 0 2px 4px rgba(0,0,0,0.05);
     transition: transform 0.3s, box-shadow 0.3s;
+    position: relative;
+    overflow: hidden;
 }
 
 .stat-card:hover {
@@ -606,6 +608,13 @@ footer {
 
 .stat-icon {
     font-size: 3rem;
+    position: relative;
+    z-index: 1;
+}
+
+.stat-content {
+    position: relative;
+    z-index: 1;
 }
 
 .stat-content h3 {
@@ -746,4 +755,511 @@ footer {
     .action-grid {
         grid-template-columns: 1fr;
     }
+}
+
+/* ========================================
+   DASHBOARD ROLES - TEMAS DIFERENCIADOS
+   ======================================== */
+
+/* ADMIN DASHBOARD - Azul Oscuro y Oro */
+body.dashboard-admin {
+    background: linear-gradient(135deg, #1a3a52 0%, #0f1f2e 100%);
+}
+
+.dashboard-admin .dashboard-header {
+    background: linear-gradient(90deg, #1e3a5f 0%, #2d5a7b 50%, #1a3a52 100%);
+    box-shadow: 0 4px 20px rgba(26, 58, 82, 0.4);
+    border-bottom: 3px solid #d4af37;
+}
+
+.dashboard-admin .dashboard-header nav {
+    border-left: 5px solid #d4af37;
+    padding-left: 1.5rem;
+}
+
+.dashboard-admin .dashboard-main {
+    background: linear-gradient(135deg, #f0f4f8 0%, #e8ecf1 100%);
+}
+
+.dashboard-admin .dashboard-welcome h2 {
+    color: #1a3a52;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.dashboard-admin .dashboard-welcome h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #d4af37, #f0b95d);
+}
+
+.dashboard-admin .dashboard-welcome p {
+    color: #2d5a7b;
+    font-weight: 500;
+}
+
+.dashboard-admin .stat-card {
+    background: linear-gradient(135deg, white 0%, #f9fafb 100%);
+    border-left: 5px solid #d4af37;
+    box-shadow: 0 4px 15px rgba(26, 58, 82, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dashboard-admin .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
+    border-left-color: #f0b95d;
+}
+
+.dashboard-admin .stat-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.15), rgba(240, 185, 93, 0.1));
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.dashboard-admin .stat-content h3 {
+    color: #1a3a52;
+    font-weight: 700;
+}
+
+.dashboard-admin .stat-content p {
+    color: #2d5a7b;
+}
+
+/* DOCENTE DASHBOARD - Verde y Esmeralda */
+body.dashboard-docente {
+    background: linear-gradient(135deg, #0d3b2f 0%, #062f26 100%);
+}
+
+.dashboard-docente .dashboard-header {
+    background: linear-gradient(90deg, #1e6e5c 0%, #2d9d81 50%, #1a5a4a 100%);
+    box-shadow: 0 4px 20px rgba(30, 110, 92, 0.4);
+    border-bottom: 3px solid #10b981;
+}
+
+.dashboard-docente .dashboard-header nav {
+    border-left: 5px solid #10b981;
+    padding-left: 1.5rem;
+}
+
+.dashboard-docente .dashboard-main {
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.dashboard-docente .dashboard-welcome h2 {
+    color: #065f46;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.dashboard-docente .dashboard-welcome h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #34d399);
+}
+
+.dashboard-docente .dashboard-welcome p {
+    color: #047857;
+    font-weight: 500;
+}
+
+.dashboard-docente .stat-card {
+    background: linear-gradient(135deg, white 0%, #f0fdf4 100%);
+    border-left: 5px solid #10b981;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dashboard-docente .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+    border-left-color: #34d399;
+}
+
+.dashboard-docente .stat-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.dashboard-docente .stat-content h3 {
+    color: #065f46;
+    font-weight: 700;
+}
+
+.dashboard-docente .stat-content p {
+    color: #047857;
+}
+
+/* ESTUDIANTE DASHBOARD - Púrpura y Violeta */
+body.dashboard-estudiante {
+    background: linear-gradient(135deg, #3b1c5f 0%, #2a0e47 100%);
+}
+
+.dashboard-estudiante .dashboard-header {
+    background: linear-gradient(90deg, #6d28d9 0%, #8b5cf6 50%, #7c3aed 100%);
+    box-shadow: 0 4px 20px rgba(124, 58, 237, 0.4);
+    border-bottom: 3px solid #a78bfa;
+}
+
+.dashboard-estudiante .dashboard-header nav {
+    border-left: 5px solid #a78bfa;
+    padding-left: 1.5rem;
+}
+
+.dashboard-estudiante .dashboard-main {
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+.dashboard-estudiante .dashboard-welcome h2 {
+    color: #4c1d95;
+    font-weight: 700;
+    position: relative;
+    padding-bottom: 0.5rem;
+}
+
+.dashboard-estudiante .dashboard-welcome h2::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 60px;
+    height: 3px;
+    background: linear-gradient(90deg, #a78bfa, #c4b5fd);
+}
+
+.dashboard-estudiante .dashboard-welcome p {
+    color: #6d28d9;
+    font-weight: 500;
+}
+
+.dashboard-estudiante .stat-card {
+    background: linear-gradient(135deg, white 0%, #faf5ff 100%);
+    border-left: 5px solid #a78bfa;
+    box-shadow: 0 4px 15px rgba(124, 58, 237, 0.1);
+    transition: all 0.3s ease;
+}
+
+.dashboard-estudiante .stat-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.2);
+    border-left-color: #c4b5fd;
+}
+
+.dashboard-estudiante .stat-icon {
+    font-size: 2.5rem;
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.15), rgba(196, 181, 253, 0.1));
+    width: 70px;
+    height: 70px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto;
+}
+
+.dashboard-estudiante .stat-content h3 {
+    color: #4c1d95;
+    font-weight: 700;
+}
+
+.dashboard-estudiante .stat-content p {
+    color: #6d28d9;
+}
+
+/* Botones para cada rol */
+.dashboard-admin .btn-primary {
+    background: linear-gradient(135deg, #d4af37 0%, #f0b95d 100%);
+    color: #1a3a52;
+}
+
+.dashboard-admin .btn-primary:hover {
+    background: linear-gradient(135deg, #f0b95d 0%, #ffcc00 100%);
+}
+
+.dashboard-docente .btn-primary {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: white;
+}
+
+.dashboard-docente .btn-primary:hover {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+}
+
+.dashboard-estudiante .btn-primary {
+    background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);
+    color: #4c1d95;
+}
+
+.dashboard-estudiante .btn-primary:hover {
+    background: linear-gradient(135deg, #c4b5fd 0%, #ddd6fe 100%);
+}
+
+/* Tarjetas de acción para cada rol */
+.dashboard-admin .action-card {
+    background: linear-gradient(135deg, white 0%, #f9fafb 100%);
+    border-top: 4px solid #d4af37;
+}
+
+.dashboard-admin .action-card:hover {
+    box-shadow: 0 12px 30px rgba(212, 175, 55, 0.2);
+}
+
+.dashboard-docente .action-card {
+    background: linear-gradient(135deg, white 0%, #f0fdf4 100%);
+    border-top: 4px solid #10b981;
+}
+
+.dashboard-docente .action-card:hover {
+    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+}
+
+.dashboard-estudiante .action-card {
+    background: linear-gradient(135deg, white 0%, #faf5ff 100%);
+    border-top: 4px solid #a78bfa;
+}
+
+.dashboard-estudiante .action-card:hover {
+    box-shadow: 0 12px 30px rgba(124, 58, 237, 0.2);
+}
+
+/* Tablas para cada rol */
+.dashboard-admin table th {
+    background: linear-gradient(90deg, #1a3a52 0%, #2d5a7b 100%);
+}
+
+.dashboard-docente table th {
+    background: linear-gradient(90deg, #065f46 0%, #047857 100%);
+}
+
+.dashboard-estudiante table th {
+    background: linear-gradient(90deg, #4c1d95 0%, #6d28d9 100%);
+}
+
+/* Alertas para cada rol */
+.dashboard-admin .alert-warning {
+    border-left-color: #d4af37;
+    background: linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%);
+}
+
+.dashboard-docente .alert-warning {
+    border-left-color: #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+}
+
+.dashboard-estudiante .alert-warning {
+    border-left-color: #a78bfa;
+    background: linear-gradient(135deg, #f5f3ff 0%, #ede9fe 100%);
+}
+
+/* Mejoras adicionales de diseño */
+
+/* Nav menus mejorados */
+.dashboard-admin .nav-menu li a.active {
+    background: linear-gradient(135deg, rgba(212, 175, 55, 0.3), rgba(240, 185, 93, 0.2));
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(212, 175, 55, 0.2);
+}
+
+.dashboard-docente .nav-menu li a.active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.3), rgba(52, 211, 153, 0.2));
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.dashboard-estudiante .nav-menu li a.active {
+    background: linear-gradient(135deg, rgba(167, 139, 250, 0.3), rgba(196, 181, 253, 0.2));
+    border-radius: 5px;
+    box-shadow: 0 2px 8px rgba(124, 58, 237, 0.2);
+}
+
+/* Cards mejoradas */
+.dashboard-admin .action-card:hover {
+    background: linear-gradient(135deg, #fafafa 0%, #fffbeb 100%);
+}
+
+.dashboard-docente .action-card:hover {
+    background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+}
+
+.dashboard-estudiante .action-card:hover {
+    background: linear-gradient(135deg, #faf5ff 0%, #f3f0ff 100%);
+}
+
+/* Badges/labels para cada rol */
+.dashboard-admin .role-badge {
+    background: linear-gradient(135deg, #d4af37 0%, #f0b95d 100%);
+    color: #1a3a52;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.dashboard-docente .role-badge {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: white;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+.dashboard-estudiante .role-badge {
+    background: linear-gradient(135deg, #a78bfa 0%, #c4b5fd 100%);
+    color: #4c1d95;
+    padding: 0.3rem 0.8rem;
+    border-radius: 20px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    display: inline-block;
+}
+
+/* Decoración de tarjetas stats */
+.dashboard-admin .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(212, 175, 55, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.dashboard-docente .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(16, 185, 129, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+.dashboard-estudiante .stat-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 100px;
+    height: 100px;
+    background: radial-gradient(circle, rgba(167, 139, 250, 0.1) 0%, transparent 70%);
+    border-radius: 50%;
+    opacity: 0.5;
+}
+
+/* Animaciones de entrada */
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.dashboard-welcome {
+    animation: slideInUp 0.6s ease-out;
+}
+
+.stat-card {
+    animation: slideInUp 0.6s ease-out;
+    animation-fill-mode: both;
+}
+
+.stat-card:nth-child(1) {
+    animation-delay: 0.1s;
+}
+
+.stat-card:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.stat-card:nth-child(3) {
+    animation-delay: 0.3s;
+}
+
+.stat-card:nth-child(4) {
+    animation-delay: 0.4s;
+}
+
+/* Efectos en links del navbar */
+.dashboard-admin .nav-menu li a {
+    position: relative;
+    transition: all 0.3s ease;
+}
+
+.dashboard-admin .nav-menu li a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #d4af37;
+    transition: width 0.3s ease;
+}
+
+.dashboard-admin .nav-menu li a:hover::after {
+    width: 100%;
+}
+
+.dashboard-docente .nav-menu li a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #10b981;
+    transition: width 0.3s ease;
+}
+
+.dashboard-docente .nav-menu li a:hover::after {
+    width: 100%;
+}
+
+.dashboard-estudiante .nav-menu li a::after {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: #a78bfa;
+    transition: width 0.3s ease;
+}
+
+.dashboard-estudiante .nav-menu li a:hover::after {
+    width: 100%;
 }

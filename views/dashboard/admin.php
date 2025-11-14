@@ -6,7 +6,7 @@
     <title>Dashboard Administrador - Sistema de Tutoría</title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
 </head>
-<body>
+<body class="dashboard-admin">
     
     <!-- Navbar -->
     <header class="dashboard-header">

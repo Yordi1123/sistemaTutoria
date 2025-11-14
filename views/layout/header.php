@@ -6,7 +6,17 @@
     <title><?php echo APP_NAME; ?></title>
     <link rel="stylesheet" href="<?php echo BASE_URL; ?>assets/css/style.css">
 </head>
-<body>
+<body <?php 
+    if (isset($_SESSION['user_id'])) {
+        if ($_SESSION['rol'] == 'coordinador') {
+            echo 'class="dashboard-admin"';
+        } elseif ($_SESSION['rol'] == 'docente') {
+            echo 'class="dashboard-docente"';
+        } elseif ($_SESSION['rol'] == 'estudiante') {
+            echo 'class="dashboard-estudiante"';
+        }
+    }
+?>>
     <header class="dashboard-header">
         <nav>
             <div class="nav-brand">
