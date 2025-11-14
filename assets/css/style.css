@@ -843,25 +843,66 @@ body.dashboard-docente {
 }
 
 .dashboard-docente .dashboard-header {
-    background: linear-gradient(90deg, #1e6e5c 0%, #2d9d81 50%, #1a5a4a 100%);
-    box-shadow: 0 4px 20px rgba(30, 110, 92, 0.4);
-    border-bottom: 3px solid #10b981;
+    background: linear-gradient(90deg, #059669 0%, #10b981 30%, #34d399 70%, #047857 100%);
+    box-shadow: 0 6px 25px rgba(16, 185, 129, 0.5), 0 0 50px rgba(16, 185, 129, 0.1);
+    border-bottom: 4px solid #06b6d4;
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-docente .dashboard-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #10b981, #34d399, #10b981);
 }
 
 .dashboard-docente .dashboard-header nav {
-    border-left: 5px solid #10b981;
+    border-left: 6px solid #06b6d4;
     padding-left: 1.5rem;
+    position: relative;
+    z-index: 2;
 }
 
 .dashboard-docente .dashboard-main {
-    background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    background: linear-gradient(180deg, #ecfdf5 0%, #dcfce7 50%, #d1fae5 100%);
+    position: relative;
+}
+
+.dashboard-docente .dashboard-main::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 20% 50%, rgba(16, 185, 129, 0.05) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(6, 182, 212, 0.05) 0%, transparent 50%);
+    pointer-events: none;
+}
+
+.dashboard-docente .dashboard-welcome {
+    position: relative;
+    z-index: 1;
 }
 
 .dashboard-docente .dashboard-welcome h2 {
     color: #065f46;
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 2.5rem;
     position: relative;
-    padding-bottom: 0.5rem;
+    padding-bottom: 1rem;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.dashboard-docente .dashboard-welcome h2::before {
+    content: '🎓';
+    margin-right: 0.5rem;
+    display: inline-block;
+    animation: bounce 2s infinite;
 }
 
 .dashboard-docente .dashboard-welcome h2::after {
@@ -869,48 +910,76 @@ body.dashboard-docente {
     position: absolute;
     bottom: 0;
     left: 0;
-    width: 60px;
-    height: 3px;
-    background: linear-gradient(90deg, #10b981, #34d399);
+    width: 80px;
+    height: 4px;
+    background: linear-gradient(90deg, #10b981, #34d399, #06b6d4);
+    border-radius: 2px;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
 }
 
 .dashboard-docente .dashboard-welcome p {
     color: #047857;
-    font-weight: 500;
+    font-weight: 600;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
 }
 
 .dashboard-docente .stat-card {
-    background: linear-gradient(135deg, white 0%, #f0fdf4 100%);
-    border-left: 5px solid #10b981;
-    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.1);
-    transition: all 0.3s ease;
+    background: linear-gradient(135deg, white 0%, #f0fdf4 50%, #ecfdf5 100%);
+    border-left: 6px solid #10b981;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.15), 0 0 1px rgba(16, 185, 129, 0.1);
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    border-radius: 15px;
+    position: relative;
+}
+
+.dashboard-docente .stat-card::after {
+    content: '';
+    position: absolute;
+    top: -2px;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, #10b981, #34d399, transparent);
+    border-radius: 2px;
 }
 
 .dashboard-docente .stat-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
-    border-left-color: #34d399;
+    transform: translateY(-12px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(16, 185, 129, 0.3), 0 0 20px rgba(6, 182, 212, 0.2);
+    border-left-color: #06b6d4;
 }
 
 .dashboard-docente .stat-icon {
-    font-size: 2.5rem;
-    background: linear-gradient(135deg, rgba(16, 185, 129, 0.15), rgba(52, 211, 153, 0.1));
-    width: 70px;
-    height: 70px;
-    border-radius: 10px;
+    font-size: 2.8rem;
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.2), rgba(52, 211, 153, 0.15), rgba(6, 182, 212, 0.1));
+    width: 85px;
+    height: 85px;
+    border-radius: 18px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    flex-shrink: 0;
+}
+
+.dashboard-docente .stat-content {
+    flex: 1;
 }
 
 .dashboard-docente .stat-content h3 {
     color: #065f46;
-    font-weight: 700;
+    font-weight: 800;
+    font-size: 2.2rem;
+    margin-bottom: 0.2rem;
 }
 
 .dashboard-docente .stat-content p {
-    color: #047857;
+    color: #059669;
+    font-weight: 600;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
 }
 
 /* ESTUDIANTE DASHBOARD - Púrpura y Violeta */
@@ -1000,12 +1069,16 @@ body.dashboard-estudiante {
 }
 
 .dashboard-docente .btn-primary {
-    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    background: linear-gradient(135deg, #10b981 0%, #34d399 50%, #06b6d4 100%);
     color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.3);
 }
 
 .dashboard-docente .btn-primary:hover {
-    background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+    background: linear-gradient(135deg, #059669 0%, #10b981 50%, #0891b2 100%);
+    box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
+    transform: translateY(-2px);
 }
 
 .dashboard-estudiante .btn-primary {
@@ -1029,11 +1102,31 @@ body.dashboard-estudiante {
 
 .dashboard-docente .action-card {
     background: linear-gradient(135deg, white 0%, #f0fdf4 100%);
-    border-top: 4px solid #10b981;
+    border-top: 5px solid #10b981;
+    border-radius: 15px;
+    transition: all 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+    overflow: hidden;
+}
+
+.dashboard-docente .action-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.1), transparent);
+    transition: left 0.6s ease;
 }
 
 .dashboard-docente .action-card:hover {
-    box-shadow: 0 12px 30px rgba(16, 185, 129, 0.2);
+    box-shadow: 0 16px 35px rgba(16, 185, 129, 0.25), 0 0 20px rgba(6, 182, 212, 0.15);
+    transform: translateY(-8px);
+}
+
+.dashboard-docente .action-card:hover::before {
+    left: 100%;
 }
 
 .dashboard-estudiante .action-card {
@@ -1051,7 +1144,16 @@ body.dashboard-estudiante {
 }
 
 .dashboard-docente table th {
-    background: linear-gradient(90deg, #065f46 0%, #047857 100%);
+    background: linear-gradient(90deg, #065f46 0%, #059669 50%, #10b981 100%);
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    color: white;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.2);
+}
+
+.dashboard-docente table tr:hover {
+    background: linear-gradient(90deg, transparent, rgba(16, 185, 129, 0.08), transparent);
 }
 
 .dashboard-estudiante table th {
@@ -1065,8 +1167,27 @@ body.dashboard-estudiante {
 }
 
 .dashboard-docente .alert-warning {
-    border-left-color: #10b981;
+    border-left: 5px solid #10b981;
     background: linear-gradient(135deg, #ecfdf5 0%, #d1fae5 100%);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.dashboard-docente .alert-info {
+    border-left: 5px solid #06b6d4;
+    background: linear-gradient(135deg, #ecf2f9 0%, #cffafe 100%);
+    box-shadow: 0 4px 15px rgba(6, 182, 212, 0.2);
+    border-radius: 10px;
+    font-weight: 500;
+}
+
+.dashboard-docente .alert-success {
+    border-left: 5px solid #10b981;
+    background: linear-gradient(135deg, #ecfdf5 0%, #bbf7d0 100%);
+    box-shadow: 0 4px 15px rgba(16, 185, 129, 0.2);
+    border-radius: 10px;
+    font-weight: 500;
 }
 
 .dashboard-estudiante .alert-warning {
@@ -1188,6 +1309,33 @@ body.dashboard-estudiante {
     }
 }
 
+@keyframes bounce {
+    0%, 100% {
+        transform: translateY(0);
+    }
+    50% {
+        transform: translateY(-10px);
+    }
+}
+
+@keyframes shimmer {
+    0% {
+        background-position: -1000px 0;
+    }
+    100% {
+        background-position: 1000px 0;
+    }
+}
+
+@keyframes glow {
+    0%, 100% {
+        box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+    }
+    50% {
+        box-shadow: 0 0 20px rgba(16, 185, 129, 0.8);
+    }
+}
+
 .dashboard-welcome {
     animation: slideInUp 0.6s ease-out;
 }
@@ -1262,4 +1410,122 @@ body.dashboard-estudiante {
 
 .dashboard-estudiante .nav-menu li a:hover::after {
     width: 100%;
+}
+
+/* Estilos avanzados para Dashboard Docente */
+.dashboard-docente .nav-menu li a {
+    position: relative;\n    transition: all 0.3s ease;
+    color: white;
+}
+
+.dashboard-docente .nav-menu li a::before {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: linear-gradient(90deg, #10b981, #34d399, #06b6d4);
+    transition: width 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    box-shadow: 0 0 10px rgba(16, 185, 129, 0.5);
+}
+
+.dashboard-docente .nav-menu li a:hover::before {
+    width: 100%;
+}
+
+.dashboard-docente .nav-menu li a.active {
+    background: linear-gradient(135deg, rgba(16, 185, 129, 0.4), rgba(52, 211, 153, 0.3));
+    border-radius: 8px;
+    box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3), 0 0 15px rgba(6, 182, 212, 0.1);
+    font-weight: 600;
+}
+
+/* Estadísticas mejoradas para docente */
+.dashboard-docente .stat-card:nth-child(1) {
+    border-left-color: #10b981;
+}
+
+.dashboard-docente .stat-card:nth-child(2) {
+    border-left-color: #14b8a6;
+}
+
+.dashboard-docente .stat-card:nth-child(3) {
+    border-left-color: #06b6d4;
+}
+
+.dashboard-docente .stat-card:nth-child(4) {
+    border-left-color: #0891b2;
+}
+
+/* Secciones de dashboard docente */
+.dashboard-docente .dashboard-section {
+    background: linear-gradient(135deg, white 0%, #f0fdf4 100%);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 2rem;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+    border-top: 4px solid #10b981;
+}
+
+.dashboard-docente .dashboard-section h3 {
+    color: #065f46;
+    font-weight: 800;
+    font-size: 1.4rem;
+    margin-bottom: 1.5rem;
+    position: relative;
+    padding-left: 1rem;
+}
+
+.dashboard-docente .dashboard-section h3::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    top: 0;\n    bottom: 0;
+    width: 4px;
+    background: linear-gradient(180deg, #10b981, #34d399, #06b6d4);
+    border-radius: 2px;
+}
+
+/* Mejora de formularios para docente */
+.dashboard-docente .form {
+    background: linear-gradient(135deg, white 0%, #f0fdf4 100%);
+    border-left: 5px solid #10b981;
+    border-radius: 15px;
+    box-shadow: 0 4px 20px rgba(16, 185, 129, 0.1);
+}
+
+.dashboard-docente .form-group input:focus,
+.dashboard-docente .form-group select:focus,
+.dashboard-docente .form-group textarea:focus {
+    border-color: #10b981;
+    box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.1), 0 0 10px rgba(16, 185, 129, 0.3);
+    background: #f0fdf4;
+}
+
+/* Badges especiales para docente */
+.dashboard-docente .badge {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+    color: white;
+    padding: 0.4rem 0.8rem;
+    border-radius: 20px;
+    font-weight: 600;\n    font-size: 0.85rem;
+    display: inline-block;
+    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+}
+
+.dashboard-docente .badge-success {
+    background: linear-gradient(135deg, #10b981 0%, #34d399 100%);
+}
+
+.dashboard-docente .badge-warning {
+    background: linear-gradient(135deg, #f59e0b 0%, #fbbf24 100%);
+}
+
+.dashboard-docente .badge-danger {
+    background: linear-gradient(135deg, #ef4444 0%, #f87171 100%);
+}
+
+.dashboard-docente .badge-info {
+    background: linear-gradient(135deg, #06b6d4 0%, #22d3ee 100%);
 }
