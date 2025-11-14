@@ -51,21 +51,25 @@ sistemaTutoria/
 
 ### 2. Configuración de Base de Datos
 1. Importa el archivo `sistema_tutoria.sql` en tu servidor MySQL
-2. Configura las credenciales en `config.php`:
 
-```php
-define('DB_HOST', 'localhost');
-define('DB_NAME', 'sistema_tutoria');
-define('DB_USER', 'root');
-define('DB_PASS', '');
-```
+### 3. Configuración de la Aplicación
+**⚠️ IMPORTANTE:** El archivo `config.php` no está incluido en el repositorio. Debes crearlo:
 
-### 3. Configuración de URL Base
-Ajusta la URL base en `config.php` según tu entorno:
+1. Copia el archivo de ejemplo:
+   ```bash
+   # Windows (PowerShell)
+   Copy-Item config.php.example config.php
+   
+   # Linux/Mac
+   cp config.php.example config.php
+   ```
 
-```php
-define('BASE_URL', 'http://localhost/sistemaTutoria/');
-```
+2. Edita `config.php` y configura:
+   - Credenciales de base de datos (DB_HOST, DB_NAME, DB_USER, DB_PASS)
+   - URL base del proyecto (BASE_URL)
+   - Zona horaria según tu región
+
+Para más detalles, consulta [INSTALACION.md](INSTALACION.md)
 
 ### 4. Acceso
 Abre tu navegador y accede a: `http://localhost/sistemaTutoria/`

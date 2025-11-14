@@ -22,7 +22,18 @@ SHOW TABLES FROM sistema_tutoria;
 
 ### 2. Configurar la Aplicación
 
-Abre el archivo `config.php` y ajusta los parámetros según tu entorno:
+**⚠️ IMPORTANTE:** El archivo `config.php` no está incluido en el repositorio por seguridad. Debes crearlo manualmente.
+
+1. Copia el archivo de ejemplo:
+   ```bash
+   # En Windows (PowerShell)
+   Copy-Item config.php.example config.php
+   
+   # En Linux/Mac
+   cp config.php.example config.php
+   ```
+
+2. Abre el archivo `config.php` y ajusta los parámetros según tu entorno:
 
 ```php
 // Configuración de la base de datos
@@ -35,7 +46,10 @@ define('DB_PASS', '');              // Contraseña de BD
 define('BASE_URL', 'http://localhost/sistemaTutoria/');
 ```
 
-**Importante:** Si tu carpeta del proyecto tiene un nombre diferente, ajusta la `BASE_URL` en consecuencia.
+**Importante:** 
+- Si tu carpeta del proyecto tiene un nombre diferente, ajusta la `BASE_URL` en consecuencia.
+- Si tu servidor MySQL usa otro puerto, agrégalo al DB_HOST (ej: `localhost:3307`)
+- Ajusta la zona horaria según tu región en la línea `date_default_timezone_set()`
 
 ### 3. Verificar mod_rewrite de Apache
 
@@ -66,6 +80,21 @@ http://localhost/sistemaTutoria/
 ```
 
 Deberías ver la página de inicio del sistema.
+
+## 🔑 Credenciales de Acceso
+
+El archivo `CREDENCIALES.txt` contiene las credenciales de los usuarios de prueba. Este archivo no está incluido en el repositorio por seguridad.
+
+Si necesitas las credenciales, copia el archivo de ejemplo:
+```bash
+# En Windows (PowerShell)
+Copy-Item CREDENCIALES.txt.example CREDENCIALES.txt
+
+# En Linux/Mac
+cp CREDENCIALES.txt.example CREDENCIALES.txt
+```
+
+**⚠️ IMPORTANTE:** Si no puedes iniciar sesión después de clonar el repositorio, ejecuta el script `scripts_bd/actualizar_passwords.sql` en phpMyAdmin para restablecer las contraseñas.
 
 ## 🧪 Datos de Prueba
 
@@ -103,10 +132,16 @@ La base de datos incluye datos de prueba:
 
 ## ⚠️ Solución de Problemas
 
+### Error: "Archivo de Configuración No Encontrado"
+✅ Copia `config.php.example` a `config.php`
+✅ Edita `config.php` con tus credenciales
+✅ Verifica que el archivo tenga permisos de lectura
+
 ### Error: "No se puede conectar a la base de datos"
 ✅ Verifica que MySQL esté corriendo
 ✅ Verifica las credenciales en `config.php`
 ✅ Verifica que la base de datos exista
+✅ Verifica que el puerto de MySQL sea el correcto (por defecto 3306)
 
 ### Error: "Página no encontrada" o "Error 404"
 ✅ Verifica que mod_rewrite esté habilitado

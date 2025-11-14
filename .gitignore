@@ -1,6 +1,9 @@
 # Archivos de configuración
 config.php
 
+# Archivos de credenciales (contiene información sensible)
+CREDENCIALES.txt
+
 # Archivos de entorno
 .env
 .env.local

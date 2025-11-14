@@ -60,7 +60,7 @@ class Estudiante {
     public function update() {
         $query = "UPDATE " . $this->table . " 
                   SET codigo = :codigo, nombres = :nombres, apellidos = :apellidos, 
-                      email = :email, ciclo = :ciclo, escuela = :escuela 
+                    email = :email, ciclo = :ciclo, escuela = :escuela 
                   WHERE id = :id";
         
         $stmt = $this->conn->prepare($query);

@@ -2,7 +2,8 @@
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteBase /sistemaTutoria/
+    # RewriteBase se detecta automáticamente, pero puedes descomentar y ajustar si es necesario
+    # RewriteBase /sistemaTutoria/
     
     # Permitir acceso a archivos y carpetas existentes
     RewriteCond %{REQUEST_FILENAME} !-f
