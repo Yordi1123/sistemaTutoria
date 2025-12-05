@@ -42,10 +42,11 @@ class Estudiante {
         // En una implementación completa, deberías crear primero el usuario
         $query = "INSERT INTO " . $this->table . " 
                   (usuario_id, codigo, nombres, apellidos, email, ciclo, escuela) 
-                  VALUES (1, :codigo, :nombres, :apellidos, :email, :ciclo, :escuela)";
+                  VALUES (:usuario_id, :codigo, :nombres, :apellidos, :email, :ciclo, :escuela)";
         
         $stmt = $this->conn->prepare($query);
         
+        $stmt->bindParam(':usuario_id', $this->usuario_id);
         $stmt->bindParam(':codigo', $this->codigo);
         $stmt->bindParam(':nombres', $this->nombres);
         $stmt->bindParam(':apellidos', $this->apellidos);

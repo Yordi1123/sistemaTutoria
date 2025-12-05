@@ -71,6 +71,6 @@ Nota: Los administradores solo se crean directamente en la BD
 - Sistema usa PDO con prepared statements
 - Protección contra SQL injection y XSS
 - Sesiones seguras con validación de roles
-
+- 
 ==============================================================
 

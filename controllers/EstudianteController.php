@@ -18,19 +18,44 @@ class EstudianteController {
     // Guardar estudiante
     public function save() {
         if ($_SERVER['REQUEST_METHOD'] == 'POST') {
-            $estudiante = new Estudiante();
-            $estudiante->codigo = $_POST['codigo'];
-            $estudiante->nombres = $_POST['nombres'];
-            $estudiante->apellidos = $_POST['apellidos'];
-            $estudiante->email = $_POST['email'];
-            $estudiante->ciclo = $_POST['ciclo'];
-            $estudiante->escuela = $_POST['escuela'];
+            require_once 'models/Usuario.php';
             
-            if ($estudiante->create()) {
-                header('Location: index.php?c=estudiante&a=index');
-                exit();
+            // 1. Crear Usuario
+            $usuario = new Usuario();
+            $usuario->username = $_POST['codigo']; // El código es el usuario
+            $usuario->password = $_POST['codigo']; // La contraseña inicial es el código
+            $usuario->rol = 'estudiante';
+            
+            // Verificar si el usuario ya existe
+            if ($usuario->usernameExists($usuario->username)) {
+                echo "El código ya está registrado como usuario";
+                return;
+            }
+            
+            if ($usuario->create()) {
+                // Obtener el ID del usuario creado
+                $usuarioCreado = $usuario->getByUsername($usuario->username);
+                
+                // 2. Crear Estudiante
+                $estudiante = new Estudiante();
+                $estudiante->usuario_id = $usuarioCreado['id'];
+                $estudiante->codigo = $_POST['codigo'];
+                $estudiante->nombres = $_POST['nombres'];
+                $estudiante->apellidos = $_POST['apellidos'];
+                $estudiante->email = $_POST['email'];
+                $estudiante->ciclo = $_POST['ciclo'];
+                $estudiante->escuela = $_POST['escuela'];
+                
+                if ($estudiante->create()) {
+                    header('Location: index.php?c=estudiante&a=index');
+                    exit();
+                } else {
+                    // Si falla crear estudiante, deberíamos borrar el usuario (rollback manual)
+                    $usuario->delete($usuarioCreado['id']);
+                    echo "Error al guardar estudiante";
+                }
             } else {
-                echo "Error al guardar";
+                echo "Error al crear usuario";
             }
         }
     }

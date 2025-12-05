@@ -104,6 +104,12 @@
                     <h4>Reporte por Estudiante</h4>
                     <p>Ver historial completo de un estudiante</p>
                 </a>
+
+                <a href="index.php?c=reporte&a=riesgo" class="action-card">
+                    <div class="action-icon">⚠️</div>
+                    <h4>Reporte de Riesgo</h4>
+                    <p>Estudiantes que requieren atención</p>
+                </a>
             </div>
         </div>
     </div>

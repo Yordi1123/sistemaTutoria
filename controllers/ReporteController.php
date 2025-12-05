@@ -196,5 +196,48 @@ class ReporteController {
         
         require_once 'views/reporte/general.php';
     }
+    // ==========================================
+    // REPORTE DE RIESGO
+    // ==========================================
+    
+    public function riesgo() {
+        AuthController::checkRole(['docente']);
+        
+        $docente_id = $this->getDocenteId();
+        
+        if (!$docente_id) {
+            $_SESSION['error'] = 'No se encontró perfil de docente';
+            header('Location: index.php?c=dashboard&a=docente');
+            exit();
+        }
+        
+        $conn = (new Database())->connect();
+        
+        // Obtener estudiantes que requieren atención
+        // Buscamos el último seguimiento de cada estudiante para ver su estado actual
+        // O podríamos listar todos los seguimientos que requieren atención
+        
+        // Enfoque: Listar estudiantes que tienen al menos un seguimiento con "requiere_atencion = 1"
+        // y mostrar el detalle de ese seguimiento (el más reciente si hay varios)
+        
+        $query = "SELECT s.*, 
+                         e.nombres as estudiante_nombres,
+                         e.apellidos as estudiante_apellidos,
+                         e.codigo as estudiante_codigo,
+                         e.email as estudiante_email,
+                         e.ciclo as estudiante_ciclo
+                  FROM seguimientos s
+                  INNER JOIN estudiantes e ON s.estudiante_id = e.id
+                  WHERE s.docente_id = :docente_id
+                  AND s.requiere_atencion = 1
+                  ORDER BY s.fecha DESC";
+        
+        $stmt = $conn->prepare($query);
+        $stmt->bindParam(':docente_id', $docente_id);
+        $stmt->execute();
+        $casos_riesgo = $stmt->fetchAll(PDO::FETCH_ASSOC);
+        
+        require_once 'views/reporte/riesgo.php';
+    }
 }
 
