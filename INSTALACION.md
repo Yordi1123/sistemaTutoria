@@ -1,13 +1,13 @@
 # Guía de Instalación - Sistema de Tutoría
 
-## 📋 Requisitos Previos
+## Requisitos Previos
 
 - PHP 7.4 o superior
 - MySQL 5.7 o superior
 - Servidor Apache con mod_rewrite habilitado
 - Laragon, XAMPP, WAMP o similar
 
-## 🚀 Pasos de Instalación
+## Pasos de Instalación
 
 ### 1. Preparar la Base de Datos
 
@@ -37,9 +37,9 @@ SHOW TABLES FROM sistema_tutoria;
 
 ```php
 // Configuración de la base de datos
-define('DB_HOST', 'localhost');     // Servidor de BD
+define('DB_HOST', '');     // Servidor de BD
 define('DB_NAME', 'sistema_tutoria'); // Nombre de la BD
-define('DB_USER', 'root');          // Usuario de BD
+define('DB_USER', '');          // Usuario de BD
 define('DB_PASS', '');              // Contraseña de BD
 
 // Configuración de la aplicación

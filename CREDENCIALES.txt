@@ -64,13 +64,3 @@ Tipos disponibles:
 
 Nota: Los administradores solo se crean directamente en la BD
 
-==============================================================
-🔐 NOTAS DE SEGURIDAD
-==============================================================
-- Las contraseñas están hasheadas con password_hash()
-- Sistema usa PDO con prepared statements
-- Protección contra SQL injection y XSS
-- Sesiones seguras con validación de roles
-- 
-==============================================================
-

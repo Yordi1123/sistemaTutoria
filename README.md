@@ -1,45 +1,3 @@
-# Sistema de Tutoría - MVC PHP Puro
-
-Sistema web desarrollado con PHP utilizando el patrón Modelo-Vista-Controlador (MVC) sin frameworks externos. Solo PHP, HTML, CSS y JavaScript puros.
-
-## 📁 Estructura del Proyecto
-
-```
-sistemaTutoria/
-│
-├── index.php              # Punto de entrada
-├── config.php            # Configuración (BD, constantes)
-├── .htaccess            # Configuración Apache
-│
-├── controllers/         # Controladores
-│   ├── HomeController.php
-│   ├── EstudianteController.php
-│   └── TutorController.php
-│
-├── models/              # Modelos
-│   ├── Database.php
-│   ├── Estudiante.php
-│   └── Tutor.php
-│
-├── views/               # Vistas
-│   ├── layout/
-│   │   ├── header.php
-│   │   └── footer.php
-│   ├── home/
-│   │   └── index.php
-│   ├── estudiante/
-│   │   ├── index.php
-│   │   └── form.php
-│   └── tutor/
-│       ├── index.php
-│       └── form.php
-│
-└── assets/              # Recursos estáticos
-    ├── css/
-    │   └── style.css
-    └── js/
-        └── main.js
-```
 
 ## 🚀 Instalación
 
@@ -154,3 +112,11 @@ Desarrollado como proyecto educativo de MVC en PHP puro.
 ## 📄 Licencia
 
 Proyecto de código abierto para fines educativos.
+
+## Modificar esta parte del archivo INSTALACION.md y del config.php
+define('DB_HOST', '');     // Servidor de BD
+define('DB_NAME', 'sistema_tutoria'); // Nombre de la BD
+define('DB_USER', '');          // Usuario de BD
+define('DB_PASS', '');              // Contraseña de BD
+
+## SE PUEDE ENTRELAZAR DOS MAQUINAS SOLO CON  ipv4
