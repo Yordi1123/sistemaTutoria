@@ -42,6 +42,32 @@ CREATE TABLE `consejerias` (
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `asignaciones_tutoria`
+--
+
+CREATE TABLE `asignaciones_tutoria` (
+  `id` int NOT NULL,
+  `estudiante_id` int NOT NULL,
+  `docente_id` int NOT NULL,
+  `fecha_asignacion` date NOT NULL,
+  `activo` tinyint(1) DEFAULT 1,
+  `motivo_reasignacion` text COLLATE utf8mb4_unicode_ci,
+  `fecha_reasignacion` date DEFAULT NULL,
+  `docente_anterior_id` int DEFAULT NULL,
+  `created_at` timestamp NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+--
+-- Dumping data for table `asignaciones_tutoria`
+--
+
+INSERT INTO `asignaciones_tutoria` (`id`, `estudiante_id`, `docente_id`, `fecha_asignacion`, `activo`) VALUES
+(1, 1, 1, '2025-01-15', 1),
+(2, 2, 2, '2025-01-15', 1);
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `consejeros`
 --
 
@@ -60,7 +86,9 @@ CREATE TABLE `consejeros` (
 --
 
 INSERT INTO `consejeros` (`id`, `usuario_id`, `codigo`, `nombres`, `apellidos`, `email`, `especialidad`) VALUES
-(1, 4, 'CONS001', 'Patricia', 'Lopez Martinez', 'plopez@uns.edu.pe', 'Psicologia');
+(1, 4, 'CONS001', 'Patricia', 'Lopez Martinez', 'plopez@uns.edu.pe', 'Psicologia'),
+(2, 7, 'CONS002', 'Roberto', 'Fernandez Diaz', 'rfernandez@uns.edu.pe', 'Orientacion Vocacional'),
+(3, 8, 'CONS003', 'Carmen', 'Vargas Ruiz', 'cvargas@uns.edu.pe', 'Trabajo Social');
 
 -- --------------------------------------------------------
 
@@ -255,13 +283,24 @@ INSERT INTO `usuarios` (`id`, `username`, `password`, `rol`, `estado`, `fecha_cr
 (1, 'admin', '$2y$10$eFdKUnR0Kv1XW28C/PflKOsgGsXPLIZGz62XuXPfn/G.QDJNFih/.', 'coordinador', 'activo', '2025-11-09 21:09:00'),
 (2, 'DOC001', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'docente', 'activo', '2025-11-09 21:09:00'),
 (3, 'DOC002', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'docente', 'activo', '2025-11-09 21:09:00'),
-(4, 'CONS001', '$2y$10$2Ew/hCeDTACgVxtXIciOmeUcK/2lPRG9wThVNzrSHXIZQ0F5H4i4O', 'consejero', 'activo', '2025-11-09 21:09:00'),
+(4, 'CONS001', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'consejero', 'activo', '2025-11-09 21:09:00'),
 (5, '0201910001', '$2y$10$PJAYkwb8yM4XtfnfIZHMAOpmn1.YyYfCvGqEQiUlRRF3IzEuq0uvq', 'estudiante', 'activo', '2025-11-09 21:09:00'),
-(6, '0201910002', '$2y$10$PJAYkwb8yM4XtfnfIZHMAOpmn1.YyYfCvGqEQiUlRRF3IzEuq0uvq', 'estudiante', 'activo', '2025-11-09 21:09:00');
+(6, '0201910002', '$2y$10$PJAYkwb8yM4XtfnfIZHMAOpmn1.YyYfCvGqEQiUlRRF3IzEuq0uvq', 'estudiante', 'activo', '2025-11-09 21:09:00'),
+(7, 'CONS002', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'consejero', 'activo', '2025-11-09 21:09:00'),
+(8, 'CONS003', '$2y$10$dZIvZsAGtTrn2nY5H/icQu118X4GkaeC.Bg17ukelfJ098mWE1OUS', 'consejero', 'activo', '2025-11-09 21:09:00');
 
 --
 -- Indexes for dumped tables
 --
+
+--
+-- Indexes for table `asignaciones_tutoria`
+--
+ALTER TABLE `asignaciones_tutoria`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_estudiante` (`estudiante_id`),
+  ADD KEY `idx_docente` (`docente_id`),
+  ADD KEY `idx_activo` (`activo`);
 
 --
 -- Indexes for table `consejerias`
@@ -348,6 +387,12 @@ ALTER TABLE `usuarios`
 --
 
 --
+-- AUTO_INCREMENT for table `asignaciones_tutoria`
+--
+ALTER TABLE `asignaciones_tutoria`
+  MODIFY `id` int NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+
+--
 -- AUTO_INCREMENT for table `consejerias`
 --
 ALTER TABLE `consejerias`
@@ -410,6 +455,13 @@ ALTER TABLE `usuarios`
 --
 -- Constraints for dumped tables
 --
+
+--
+-- Constraints for table `asignaciones_tutoria`
+--
+ALTER TABLE `asignaciones_tutoria`
+  ADD CONSTRAINT `asignaciones_estudiante_fk` FOREIGN KEY (`estudiante_id`) REFERENCES `estudiantes` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `asignaciones_docente_fk` FOREIGN KEY (`docente_id`) REFERENCES `docentes` (`id`) ON DELETE CASCADE;
 
 --
 -- Constraints for table `consejerias`

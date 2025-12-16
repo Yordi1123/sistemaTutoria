@@ -29,6 +29,13 @@
     <main class="dashboard-main">
         <div class="container">
             
+            <?php
+            $breadcrumbs = [
+                ['nombre' => 'Dashboard Administrador']
+            ];
+            include 'views/components/breadcrumb.php';
+            ?>
+            
             <div class="dashboard-welcome">
                 <h2>Bienvenido, Administrador</h2>
                 <p>Panel de control y administración del sistema</p>

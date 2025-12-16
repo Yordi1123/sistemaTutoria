@@ -1,5 +1,14 @@
 <?php require_once 'views/layout/header.php'; ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=' . ($_SESSION['rol'] == 'estudiante' ? 'estudiante' : 'docente')],
+    ['nombre' => 'Mis Tutorías', 'url' => 'index.php?c=tutoria&a=' . ($_SESSION['rol'] == 'estudiante' ? 'mistutorias' : 'index')],
+    ['nombre' => 'Detalle']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
     <h2>📋 Detalle de Tutoría</h2>
 

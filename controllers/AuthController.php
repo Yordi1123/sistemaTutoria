@@ -139,6 +139,9 @@ class AuthController {
             case 'estudiante':
                 header('Location: index.php?c=dashboard&a=estudiante');
                 break;
+            case 'consejero':
+                header('Location: index.php?c=consejeria&a=dashboard');
+                break;
             default:
                 header('Location: index.php');
                 break;

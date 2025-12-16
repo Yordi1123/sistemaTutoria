@@ -82,7 +82,39 @@ class TutoriaController {
             // Verificar conflicto de horario
             $tutoriaModel = new Tutoria();
             if ($tutoriaModel->verificarConflicto($docente_id, $fecha, $hora)) {
-                $errors[] = 'El tutor ya tiene una sesión programada en ese horario';
+                // Obtener horarios alternativos disponibles
+                $horarioModel = new HorarioDocente();
+                $horariosDocente = $horarioModel->getActivosByDocente($docente_id);
+                
+                $diaSemana = date('l', strtotime($fecha)); // English day name
+                $diasMap = [
+                    'Monday' => 'Lunes', 'Tuesday' => 'Martes', 'Wednesday' => 'Miércoles',
+                    'Thursday' => 'Jueves', 'Friday' => 'Viernes', 'Saturday' => 'Sábado', 'Sunday' => 'Domingo'
+                ];
+                $diaEspanol = $diasMap[$diaSemana] ?? $diaSemana;
+                
+                // Buscar horarios del día seleccionado
+                $horasAlternativas = [];
+                foreach ($horariosDocente as $horario) {
+                    if ($horario['dia_semana'] == $diaEspanol) {
+                        $inicioH = (int)substr($horario['hora_inicio'], 0, 2);
+                        $finH = (int)substr($horario['hora_fin'], 0, 2);
+                        for ($h = $inicioH; $h < $finH; $h++) {
+                            $horaAlt = sprintf('%02d:00:00', $h);
+                            if ($horaAlt != $hora && !$tutoriaModel->verificarConflicto($docente_id, $fecha, $horaAlt)) {
+                                $horasAlternativas[] = date('h:i A', strtotime($horaAlt));
+                            }
+                        }
+                    }
+                }
+                
+                $mensaje = 'El tutor ya tiene una sesión programada en ese horario.';
+                if (!empty($horasAlternativas)) {
+                    $mensaje .= ' Horarios alternativos disponibles: ' . implode(', ', array_slice($horasAlternativas, 0, 3));
+                } else {
+                    $mensaje .= ' No hay horarios alternativos disponibles para este día.';
+                }
+                $errors[] = $mensaje;
             }
             
             if (!empty($errors)) {

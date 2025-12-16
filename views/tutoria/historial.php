@@ -1,5 +1,14 @@
 <?php require_once 'views/layout/header.php'; ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=estudiante'],
+    ['nombre' => 'Mis Tutorías', 'url' => 'index.php?c=tutoria&a=mistutorias'],
+    ['nombre' => 'Historial']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
     <h2>📊 Historial de Tutorías</h2>
     <p>Consulta todas tus tutorías y estadísticas</p>

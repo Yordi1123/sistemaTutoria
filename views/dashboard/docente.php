@@ -39,6 +39,13 @@ if ($docente_id) {
 require_once 'views/layout/header.php'; 
 ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard Docente']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
     
     <div class="dashboard-welcome">

@@ -36,6 +36,13 @@ if ($estudiante_id) {
 require_once 'views/layout/header.php'; 
 ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard Estudiante']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
     
     <?php if (isset($_SESSION['success'])): ?>

@@ -1,9 +1,16 @@
 <?php require_once 'views/layout/header.php'; ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=estudiante'],
+    ['nombre' => 'Solicitar Tutoría']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
     <div class="page-header">
         <h2>📝 Solicitar Tutoría</h2>
-        <a href="index.php?c=dashboard&a=estudiante" class="btn">← Volver</a>
     </div>
 
     <?php if (isset($_SESSION['errors'])): ?>
@@ -70,14 +77,39 @@
 
         <div class="form-group">
             <label for="fecha" class="required">Fecha</label>
+            
+            <!-- Quick Date Selection -->
+            <div class="mini-calendar">
+                <p style="margin-bottom: 0.5rem; color: #666;">📅 Selección rápida (próximos 7 días):</p>
+                <div class="quick-dates" id="quick-dates">
+                    <?php
+                    $diasSemana = ['Dom', 'Lun', 'Mar', 'Mié', 'Jue', 'Vie', 'Sáb'];
+                    for ($i = 0; $i < 7; $i++) {
+                        $fecha = date('Y-m-d', strtotime("+$i days"));
+                        $diaSemana = $diasSemana[date('w', strtotime($fecha))];
+                        $diaNum = date('d', strtotime($fecha));
+                        $mes = date('M', strtotime($fecha));
+                    ?>
+                    <button type="button" 
+                            class="quick-date-btn" 
+                            data-fecha="<?= $fecha ?>"
+                            onclick="seleccionarFecha('<?= $fecha ?>')">
+                        <span class="day-name"><?= $diaSemana ?></span>
+                        <span class="day-num"><?= $diaNum ?></span>
+                        <small><?= $mes ?></small>
+                    </button>
+                    <?php } ?>
+                </div>
+            </div>
+            
             <input type="date" 
                    id="fecha" 
                    name="fecha" 
                    min="<?= date('Y-m-d') ?>"
                    value="<?= isset($_SESSION['old']['fecha']) ? htmlspecialchars($_SESSION['old']['fecha']) : '' ?>"
-                   onchange="filtrarHorasPorDia()"
+                   onchange="filtrarHorasPorDia(); actualizarBotonesRapidos();"
                    required>
-            <small>Selecciona una fecha a partir de hoy</small>
+            <small>O selecciona otra fecha en el calendario</small>
         </div>
 
         <div class="form-group">
@@ -228,7 +260,27 @@ window.addEventListener('load', function() {
     if (docenteSelect.value) {
         cargarHorarios();
     }
+    actualizarBotonesRapidos();
 });
+
+// Seleccionar fecha desde botones rápidos
+function seleccionarFecha(fecha) {
+    document.getElementById('fecha').value = fecha;
+    filtrarHorasPorDia();
+    actualizarBotonesRapidos();
+}
+
+// Actualizar estado visual de botones rápidos
+function actualizarBotonesRapidos() {
+    const fechaSeleccionada = document.getElementById('fecha').value;
+    document.querySelectorAll('.quick-date-btn').forEach(btn => {
+        if (btn.dataset.fecha === fechaSeleccionada) {
+            btn.classList.add('active');
+        } else {
+            btn.classList.remove('active');
+        }
+    });
+}
 </script>
 
 <style>
@@ -245,6 +297,18 @@ window.addEventListener('load', function() {
     border-radius: 8px;
     border: 1px solid #ddd;
     font-size: 0.9rem;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.horario-dia-card:hover {
+    border-color: #2c5aa0;
+    box-shadow: 0 2px 8px rgba(44, 90, 160, 0.2);
+}
+
+.horario-dia-card.selected {
+    border-color: #2c5aa0;
+    background: #e3f2fd;
 }
 
 .horario-dia-card strong {
@@ -260,6 +324,56 @@ window.addEventListener('load', function() {
     border-radius: 4px;
     font-size: 0.85rem;
     margin: 2px 0;
+}
+
+/* Visual Mini Calendar */
+.mini-calendar {
+    margin: 1rem 0;
+}
+.quick-dates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-bottom: 1rem;
+}
+.quick-date-btn {
+    padding: 8px 16px;
+    border: 2px solid #e0e0e0;
+    background: white;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    transition: all 0.2s;
+}
+.quick-date-btn:hover {
+    border-color: #2c5aa0;
+    background: #f0f7ff;
+}
+.quick-date-btn.active {
+    border-color: #2c5aa0;
+    background: #2c5aa0;
+    color: white;
+}
+.quick-date-btn .day-name {
+    display: block;
+    font-weight: bold;
+}
+.quick-date-btn .day-num {
+    font-size: 1.1rem;
+}
+
+/* Enhanced date input */
+input[type="date"] {
+    padding: 12px;
+    font-size: 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    width: 100%;
+    transition: border-color 0.2s;
+}
+input[type="date"]:focus {
+    border-color: #2c5aa0;
+    outline: none;
 }
 </style>
 

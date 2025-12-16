@@ -1,8 +1,18 @@
 <?php require_once 'views/layout/header.php'; ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=admin'],
+    ['nombre' => 'Asignaciones']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
-    <h2>📋 Asignaciones Tutor-Estudiante</h2>
-    <p>Gestión de asignaciones permanentes de estudiantes a tutores</p>
+    <div class="page-header">
+        <h2>📋 Asignaciones Tutor-Estudiante</h2>
+        <p>Gestión de asignaciones permanentes de estudiantes a tutores</p>
+    </div>
 
     <?php if (isset($_SESSION['success'])): ?>
         <div class="alert alert-success">
@@ -41,9 +51,13 @@
         </div>
     </div>
 
-    <div style="margin-bottom: 1.5rem;">
+    <!-- Barra de acciones y búsqueda -->
+    <div class="actions-bar">
         <a href="index.php?c=asignacion&a=create" class="btn btn-primary">➕ Nueva Asignación</a>
-        <a href="index.php?c=dashboard&a=admin" class="btn">← Volver al Dashboard</a>
+        
+        <div class="search-box">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar estudiante o tutor..." onkeyup="filtrarTabla()">
+        </div>
     </div>
 
     <?php if ($total_sin_asignar > 0): ?>
@@ -53,7 +67,7 @@
     </div>
     <?php endif; ?>
 
-    <table>
+    <table id="dataTable">
         <thead>
             <tr>
                 <th>Estudiante</th>
@@ -97,7 +111,54 @@
     </table>
 </div>
 
+<script>
+function filtrarTabla() {
+    const input = document.getElementById('searchInput');
+    const filter = input.value.toLowerCase();
+    const table = document.getElementById('dataTable');
+    const rows = table.getElementsByTagName('tr');
+    
+    for (let i = 1; i < rows.length; i++) {
+        const row = rows[i];
+        const cells = row.getElementsByTagName('td');
+        let found = false;
+        
+        for (let j = 0; j < cells.length - 1; j++) {
+            if (cells[j] && cells[j].textContent.toLowerCase().includes(filter)) {
+                found = true;
+                break;
+            }
+        }
+        
+        row.style.display = found ? '' : 'none';
+    }
+}
+</script>
+
 <style>
+.page-header { margin-bottom: 1.5rem; }
+.page-header h2 { color: #2c3e50; margin-bottom: 0.25rem; }
+.page-header p { color: #7f8c8d; }
+.actions-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1rem;
+}
+.search-box input {
+    padding: 0.75rem 1rem;
+    border: 2px solid #e0e0e0;
+    border-radius: 8px;
+    width: 280px;
+    font-size: 0.95rem;
+    transition: border-color 0.2s;
+}
+.search-box input:focus {
+    border-color: #6366f1;
+    outline: none;
+}
 .stats-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));

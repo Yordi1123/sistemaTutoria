@@ -2,36 +2,35 @@
 
 <?php
 $breadcrumbs = [
-    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=admin'],
-    ['nombre' => 'Tutores']
+    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=estudiante'],
+    ['nombre' => 'Tutores Disponibles']
 ];
 include 'views/components/breadcrumb.php';
 ?>
 
 <div class="container">
     <div class="page-header">
-        <h2>👨‍🏫 Lista de Tutores / Docentes</h2>
+        <h2>👨‍🏫 Tutores Disponibles</h2>
+        <p>Consulta la información de los tutores para solicitar tutorías</p>
     </div>
 
-    <!-- Barra de acciones y búsqueda -->
+    <!-- Barra de búsqueda -->
     <div class="actions-bar">
-        <a href="index.php?c=tutor&a=create" class="btn btn-primary">➕ Nuevo Tutor</a>
+        <a href="index.php?c=tutoria&a=solicitar" class="btn btn-primary">📝 Solicitar Tutoría</a>
         
         <div class="search-box">
-            <input type="text" id="searchInput" placeholder="🔍 Buscar por código, nombre o especialidad..." onkeyup="filtrarTabla()">
+            <input type="text" id="searchInput" placeholder="🔍 Buscar por nombre o especialidad..." onkeyup="filtrarTabla()">
         </div>
     </div>
 
     <div class="table-info">
-        <span id="resultCount"><?php echo count($tutores); ?></span> tutores registrados
+        <span id="resultCount"><?php echo count($tutores); ?></span> tutores disponibles
     </div>
     
     <table id="dataTable">
         <thead>
             <tr>
-                <th>Código</th>
-                <th>Apellidos</th>
-                <th>Nombres</th>
+                <th>Tutor</th>
                 <th>Especialidad</th>
                 <th>Email</th>
                 <th>Acciones</th>
@@ -41,22 +40,20 @@ include 'views/components/breadcrumb.php';
             <?php if (!empty($tutores)): ?>
                 <?php foreach ($tutores as $tutor): ?>
                 <tr>
-                    <td><strong><?php echo htmlspecialchars($tutor['codigo']); ?></strong></td>
-                    <td><?php echo htmlspecialchars($tutor['apellidos']); ?></td>
-                    <td><?php echo htmlspecialchars($tutor['nombres']); ?></td>
+                    <td>
+                        <strong><?php echo htmlspecialchars($tutor['apellidos'] . ', ' . $tutor['nombres']); ?></strong>
+                        <br><small class="text-muted"><?php echo htmlspecialchars($tutor['codigo']); ?></small>
+                    </td>
                     <td><span class="badge badge-success"><?php echo htmlspecialchars($tutor['especialidad']); ?></span></td>
                     <td><?php echo htmlspecialchars($tutor['email']); ?></td>
                     <td>
-                        <a href="index.php?c=tutor&a=edit&id=<?php echo $tutor['id']; ?>" class="btn-small">✏️ Editar</a>
-                        <a href="index.php?c=tutor&a=delete&id=<?php echo $tutor['id']; ?>" 
-                           class="btn-small btn-danger" 
-                           onclick="return confirm('¿Estás seguro de eliminar a este tutor?')">🗑️ Eliminar</a>
+                        <a href="index.php?c=tutoria&a=solicitar" class="btn-small btn-primary">📝 Solicitar Tutoría</a>
                     </td>
                 </tr>
                 <?php endforeach; ?>
             <?php else: ?>
                 <tr>
-                    <td colspan="6" style="text-align: center; padding: 2rem;">No hay tutores registrados</td>
+                    <td colspan="4" style="text-align: center; padding: 2rem;">No hay tutores registrados</td>
                 </tr>
             <?php endif; ?>
         </tbody>
@@ -93,7 +90,8 @@ function filtrarTabla() {
 
 <style>
 .page-header { margin-bottom: 1.5rem; }
-.page-header h2 { color: #2c3e50; }
+.page-header h2 { color: #2c3e50; margin-bottom: 0.25rem; }
+.page-header p { color: #7f8c8d; }
 .actions-bar {
     display: flex;
     justify-content: space-between;
@@ -119,6 +117,7 @@ function filtrarTabla() {
     margin-bottom: 0.5rem;
     font-size: 0.9rem;
 }
+.text-muted { color: #7f8c8d; }
 .badge-success {
     background: #27ae60;
     color: white;

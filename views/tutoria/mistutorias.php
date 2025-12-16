@@ -1,5 +1,13 @@
 <?php require_once 'views/layout/header.php'; ?>
 
+<?php
+$breadcrumbs = [
+    ['nombre' => 'Dashboard', 'url' => 'index.php?c=dashboard&a=estudiante'],
+    ['nombre' => 'Mis Tutorías']
+];
+include 'views/components/breadcrumb.php';
+?>
+
 <div class="container">
     <h2>📚 Mis Tutorías</h2>
     <p>Todas tus solicitudes de tutoría</p>
