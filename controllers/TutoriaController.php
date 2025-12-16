@@ -565,5 +565,134 @@ class TutoriaController {
             }
         }
     }
+
+    // ==========================================
+    // CONFIRMAR ASISTENCIA (DOCENTE)
+    // ==========================================
+    
+    public function confirmarAsistenciaDocente() {
+        AuthController::checkRole(['docente']);
+        
+        $id = $_GET['id'];
+        
+        // Obtener docente_id
+        $tutorModel = new Tutor();
+        $tutores = $tutorModel->getAll();
+        $docente_id = null;
+        
+        foreach ($tutores as $tutor) {
+            if ($tutor['usuario_id'] == $_SESSION['user_id']) {
+                $docente_id = $tutor['id'];
+                break;
+            }
+        }
+        
+        $tutoriaModel = new Tutoria();
+        
+        // Verificar que la tutoría pertenece al docente
+        if (!$tutoriaModel->perteneceADocente($id, $docente_id)) {
+            $_SESSION['error'] = 'No tienes permiso para gestionar esta tutoría';
+            header('Location: index.php?c=tutoria&a=mistutoriasdocente');
+            exit();
+        }
+        
+        // Verificar que la tutoría está confirmada
+        $tutoria = $tutoriaModel->getById($id);
+        if ($tutoria['estado'] != 'confirmada') {
+            $_SESSION['error'] = 'Solo puedes marcar asistencia en tutorías confirmadas';
+            header('Location: index.php?c=tutoria&a=mistutoriasdocente');
+            exit();
+        }
+        
+        // Marcar como realizada
+        if ($tutoriaModel->confirmarAsistencia($id)) {
+            $_SESSION['success'] = 'Asistencia confirmada. La tutoría ha sido marcada como realizada.';
+        } else {
+            $_SESSION['error'] = 'Error al confirmar la asistencia';
+        }
+        
+        header('Location: index.php?c=tutoria&a=mistutoriasdocente');
+        exit();
+    }
+
+    // ==========================================
+    // REGISTRAR INASISTENCIA (DOCENTE)
+    // ==========================================
+    
+    public function registrarInasistencia() {
+        AuthController::checkRole(['docente']);
+        
+        $id = $_GET['id'];
+        
+        // Si es GET, mostrar formulario
+        if ($_SERVER['REQUEST_METHOD'] == 'GET' && !isset($_GET['confirmar'])) {
+            $tutoriaModel = new Tutoria();
+            $tutoria = $tutoriaModel->getById($id);
+            
+            if (!$tutoria) {
+                $_SESSION['error'] = 'Tutoría no encontrada';
+                header('Location: index.php?c=tutoria&a=mistutoriasdocente');
+                exit();
+            }
+            
+            require_once 'views/tutoria/inasistencia.php';
+            return;
+        }
+        
+        // Procesar POST
+        if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+            $justificacion = trim($_POST['justificacion'] ?? '');
+            
+            if (empty($justificacion)) {
+                $_SESSION['error'] = 'La justificación es obligatoria';
+                header('Location: index.php?c=tutoria&a=registrarInasistencia&id=' . $id);
+                exit();
+            }
+            
+            // Obtener docente_id
+            $tutorModel = new Tutor();
+            $tutores = $tutorModel->getAll();
+            $docente_id = null;
+            
+            foreach ($tutores as $tutor) {
+                if ($tutor['usuario_id'] == $_SESSION['user_id']) {
+                    $docente_id = $tutor['id'];
+                    break;
+                }
+            }
+            
+            $tutoriaModel = new Tutoria();
+            
+            // Verificar que la tutoría pertenece al docente
+            if (!$tutoriaModel->perteneceADocente($id, $docente_id)) {
+                $_SESSION['error'] = 'No tienes permiso para gestionar esta tutoría';
+                header('Location: index.php?c=tutoria&a=mistutoriasdocente');
+                exit();
+            }
+            
+            // Registrar inasistencia
+            $conn = (new Database())->connect();
+            $observaciones = "INASISTENCIA REGISTRADA el " . date('d/m/Y H:i') . "\nJustificación: " . $justificacion;
+            
+            $query = "UPDATE tutorias 
+                      SET estado = 'cancelada',
+                          asistencia_confirmada = 0,
+                          observaciones = CONCAT(IFNULL(observaciones, ''), :observaciones)
+                      WHERE id = :id";
+            
+            $stmt = $conn->prepare($query);
+            $stmt->bindParam(':observaciones', $observaciones);
+            $stmt->bindParam(':id', $id);
+            
+            if ($stmt->execute()) {
+                $_SESSION['success'] = 'Inasistencia registrada correctamente';
+            } else {
+                $_SESSION['error'] = 'Error al registrar la inasistencia';
+            }
+            
+            header('Location: index.php?c=tutoria&a=mistutoriasdocente');
+            exit();
+        }
+    }
 }
 

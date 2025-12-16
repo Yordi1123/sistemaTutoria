@@ -147,6 +147,12 @@ require_once 'views/layout/header.php';
                 <p>Consultar lista de estudiantes</p>
             </a>
 
+            <a href="index.php?c=asignacion&a=misAsignados" class="action-card">
+                <div class="action-icon">📌</div>
+                <h4>Mis Asignados</h4>
+                <p>Ver estudiantes asignados permanentemente</p>
+            </a>
+
         </div>
     </div>
 

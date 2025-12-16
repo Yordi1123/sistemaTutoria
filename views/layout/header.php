@@ -28,6 +28,7 @@
                         <li><a href="<?php echo BASE_URL; ?>index.php?c=dashboard&a=admin">Dashboard</a></li>
                         <li><a href="<?php echo BASE_URL; ?>index.php?c=estudiante">Estudiantes</a></li>
                         <li><a href="<?php echo BASE_URL; ?>index.php?c=tutor">Tutores</a></li>
+                        <li><a href="<?php echo BASE_URL; ?>index.php?c=asignacion">Asignaciones</a></li>
                     <?php elseif ($_SESSION['rol'] == 'docente'): ?>
                         <li><a href="<?php echo BASE_URL; ?>index.php?c=dashboard&a=docente">Dashboard</a></li>
                         <li><a href="<?php echo BASE_URL; ?>index.php?c=estudiante">Estudiantes</a></li>

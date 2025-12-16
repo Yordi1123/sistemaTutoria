@@ -100,6 +100,12 @@
                         <p>Registrar un nuevo tutor</p>
                     </a>
 
+                    <a href="index.php?c=asignacion" class="action-card">
+                        <div class="action-icon">🔗</div>
+                        <h4>Asignaciones</h4>
+                        <p>Asignar estudiantes a tutores</p>
+                    </a>
+
                 </div>
             </div>
 

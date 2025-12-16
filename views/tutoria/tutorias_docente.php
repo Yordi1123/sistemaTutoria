@@ -61,6 +61,13 @@
                     <td>
                         <a href="index.php?c=tutoria&a=detalle&id=<?php echo $tutoria['id']; ?>" 
                            class="btn-small">Ver Detalle</a>
+                        <?php if ($tutoria['estado'] == 'confirmada'): ?>
+                            <a href="index.php?c=tutoria&a=confirmarAsistenciaDocente&id=<?php echo $tutoria['id']; ?>" 
+                               class="btn-small btn-success"
+                               onclick="return confirm('¿Confirmar que el estudiante asistió a la tutoría?')">✅ Asistió</a>
+                            <a href="index.php?c=tutoria&a=registrarInasistencia&id=<?php echo $tutoria['id']; ?>" 
+                               class="btn-small btn-danger">❌ No Asistió</a>
+                        <?php endif; ?>
                         <?php if ($tutoria['estado'] == 'realizada'): ?>
                             <a href="index.php?c=ficha&a=crear&tutoria_id=<?php echo $tutoria['id']; ?>" 
                                class="btn-small btn-primary">Llenar Ficha</a>
@@ -106,6 +113,14 @@
 .badge-danger {
     background: #f8d7da;
     color: #842029;
+}
+
+.btn-success {
+    background: #27ae60;
+    color: white;
+}
+.btn-success:hover {
+    background: #219a52;
 }
 </style>
 
